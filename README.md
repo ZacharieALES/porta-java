@@ -18,10 +18,11 @@ A more flexible way to define formulations is to create a class which extends Ab
 
 1 - AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in the formulation thanks to the method AbstractFormulationGenerator.addVariable().
 
-	/* Example of createVariables() method implementation for the knapsack problem */
+	/* Example of createVariables() method implementation for the knapsack problem 
+	 * (https://en.wikipedia.org/wiki/Knapsack_problem#Definition)
+	 */
 	protected void createVariables() {
 		
-	  /* Register the knapsack formulation variables */
 	  for(int i = 1; i <= n; ++i)
     
 	    /* Add the variable "xi" which takes values between 0 and 1 */
@@ -31,14 +32,16 @@ A more flexible way to define formulations is to create a class which extends Ab
 
 2 - String getInequalities(): this method is used to create a string which contains all the formulation inequalities thanks to the method AbstractFormulationGenerator.getInequalities().
 
-	/* Example of getInequalities() method implementation for the knapsack problem */
+	/* Example of getInequalities() method implementation for the knapsack problem
+	 * (https://en.wikipedia.org/wiki/Knapsack_problem#Definition)
+	 */
 	public String getInequalities() throws UnknownVariableName {
 	
 	  /* Remarks: 
 	   * - the weight of item i is stored in position i-1 of array w[];
 	   * - do not use '*' to multiply a variable and its coefficient;
 	   * - the constraints must be separated by \n (here there is only one constraint) 
-	   * - the method portaName enables to get the name of your variable for porta
+	   * - the method portaName() enables to get the name of your variable for porta
 	   */
 	  String constraint = w[1 - 1] + " " + portaName("x" + 1);
 		
@@ -51,6 +54,6 @@ A more flexible way to define formulations is to create a class which extends Ab
 	  return constraint;
 	}
   
-  The class example.Knapsack is a good entry point to see how to use the software.
+  The class Knapsack in the package "example" is a good entry point to see how to use the software.
   
-  We are in the early stage of this project. I would be most grateful if you could report to me any bug or comment that you might have (through the github issue system or directly by mail zacharie.ales[at]ensta[dot]fr).
+  We are in the early stage of this project. I would be most grateful if you could report to me any bug, comment or suggestion that you might have (through the github issue system or directly by mail zacharie.ales[at]ensta[dot]fr).
