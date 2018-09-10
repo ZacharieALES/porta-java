@@ -239,6 +239,7 @@ public class Knapsack extends AbstractFormulationGenerator{
 		for(int i = 2; i <= n; ++i)
 			constraint += " + " + w[i - 1] + " " + portaName("x" + i);
 		
+		/* Add the right-hand side */
 		constraint += " <= " + K;
 			
 		return constraint;
