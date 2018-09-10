@@ -1,5 +1,5 @@
 # porta-java
-The software porta is used to analyze polytopes and polyhedra. One of its drawback is that the variables in the formulation must be named x1, x2, x3, ... This is not really user-friendly when your formulation initially contains different variables names with potentially several indices. It makes it difficult to:
+The software porta is used to analyze polytopes and polyhedra. One of its drawback is that the variables in the formulation used to define the polytopes must be named x1, x2, x3, ... This is not really user-friendly when your formulation initially contains different variables names with potentially several indices. It makes it difficult to:
 - write your formulation in a way that porta understands it;
 - understand the outputs returned by porta.
 
