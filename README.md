@@ -5,6 +5,8 @@ The software porta is used to analyze polytopes and polyhedra. One of its drawba
 
 The aim of the porta-java project is to alleviate these drawbacks.
 
+Early warning: it currently does not work on windows.
+
 For a given polytope P, this project currently enables to:
 - find the integer points in P;
 - find the dimension and the hyperplans which include P;
