@@ -701,7 +701,7 @@ public abstract class AbstractFormulationGenerator {
 	 * @param inputFile Path to the .poi file which contains the formulation
 	 */
 	public static void traf(String inputFile){
-		Command.execute("./lib/porta-1.4.1/gnu-make/bin/traf " + inputFile);
+		Command.execute("traf " + inputFile);
 	}
 
 	/**
@@ -710,9 +710,8 @@ public abstract class AbstractFormulationGenerator {
 	 * @return The porta output which includes the dimension and the including hyperplanes
 	 */
 	protected static String dim(String inputFile){
-//		System.out.println("Execute command: " + "./lib/porta-1.4.1/gnu-make/bin/dim " + inputFile);
 		
-		String result = Command.execute("./lib/porta-1.4.1/gnu-make/bin/dim " + inputFile);
+		String result = Command.execute("dim " + inputFile);
 		
 		String[] sResult = result.split("DIMENSION OF THE POLYHEDRON");
 		
@@ -728,7 +727,7 @@ public abstract class AbstractFormulationGenerator {
 	 * @throws InvalidIEQFileFormatException 
 	 */
 	private static void vint(String inputFile) throws InvalidIEQFileFormatException{
-		String result = Command.execute("./lib/porta-1.4.1/gnu-make/bin/vint " + inputFile);
+		String result = Command.execute("vint " + inputFile);
 		
 		String[] sResult = result.split("number of valid integral points");
 		
