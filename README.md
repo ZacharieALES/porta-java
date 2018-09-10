@@ -3,7 +3,7 @@ The software porta is used to analyze polytopes and polyhedra. One of its drawba
 - write your formulation in a way that porta understands it;
 - understand the outputs returned by porta.
 
-The aim of this project is to alleviate these drawbacks.
+The aim of the porta-java project is to alleviate these drawbacks.
 
 For a given polytope P, this project currently enables to:
 - find the integer points in P;
@@ -15,6 +15,7 @@ The easiest way to define a formulation is to use a CPLEX lp file (http://lpsolv
 	LPReader formulation = new LPReader("myformulation.lp");
 
 A more flexible way to define formulations is to create a class which extends AbstractFormulationGenerator. In that case, you need to implement two abstract methods :
+
 1 - AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in the formulation thanks to the method AbstractFormulationGenerator.addVariable().
 
 Example of createVariables() method implementation for the knapsack problem:
