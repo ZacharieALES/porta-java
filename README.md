@@ -56,4 +56,9 @@ A more flexible way to define formulations is to create a class which extends Ab
   
   The class Knapsack in the package "example" is a good entry point to see how to use the software.
   
-  We are in the early stage of this project. I would be most grateful if you could report to me any bug, comment or suggestion that you might have (through the github issue system or directly by mail zacharie.ales[at]ensta[dot]fr).
+  We are in the early stage of this project so bugs and limitations are to be expected. I would be most grateful if you could report to me any bug, comment or suggestion that you might have (through the github issue system or directly by mail zacharie.ales[at]ensta[dot]fr).
+  
+  Considered new features for the future:
+  - possibility to define a polytope by specifying its integer points (useful when porta is long to compute all these solutions from the formulation);
+  - better handling of the .lp format (in particular keywords "free" and "infinity" do not work currently).
+  
