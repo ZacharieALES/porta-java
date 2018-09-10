@@ -18,8 +18,7 @@ A more flexible way to define formulations is to create a class which extends Ab
 
 1 - AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in the formulation thanks to the method AbstractFormulationGenerator.addVariable().
 
-Example of createVariables() method implementation for the knapsack problem:
-
+	/* Example of createVariables() method implementation for the knapsack problem */
 	protected void createVariables() {
 		
 	  /* Register the knapsack formulation variables */
@@ -32,8 +31,7 @@ Example of createVariables() method implementation for the knapsack problem:
 
 2 - String getInequalities(): this method is used to create a string which contains all the formulation inequalities thanks to the method AbstractFormulationGenerator.getInequalities().
 
-Example of getInequalities() method implementation for the knapsack problem:
-
+	/* Example of getInequalities() method implementation for the knapsack problem */
 	public String getInequalities() throws UnknownVariableName {
 	
 	  /* Remarks: 
