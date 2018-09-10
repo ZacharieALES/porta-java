@@ -11,7 +11,8 @@ For a given polytope P, this project currently enables to:
 - find the facets of P.
  
 The easiest way to define a formulation is to use a CPLEX lp file (http://lpsolve.sourceforge.net/5.1/CPLEX-format.htm) using the LPReader class :
-| LPReader formulation = new LPReader("myformulation.lp");
+
+	LPReader formulation = new LPReader("myformulation.lp");
 
 A more flexible way to define formulations is to create a class which extends AbstractFormulationGenerator. In that case, you need to implement two abstract methods :
 1 - AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in the formulation thanks to the method AbstractFormulationGenerator.addVariable().
@@ -31,23 +32,24 @@ Example of createVariables() method implementation for the knapsack problem:
 2 - String getInequalities(): this method is used to create a string which contains all the formulation inequalities thanks to the method AbstractFormulationGenerator.getInequalities().
 
 Example of getInequalities() method implementation for the knapsack problem:
+
 	public String getInequalities() throws UnknownVariableName {
-  
-  /* Remarks: 
-		 * - the weight of item i is stored in position i-1 of array w[];
-		 * - do not use '*' to multiply a variable and its coefficient;
-		 * - the constraints must be separated by \n (here there is only one constraint) 
-     * - the method portaName enables to get the name of your variable for porta
-     */
-		String constraint = w[1 - 1] + " " + portaName("x" + 1);
+	
+	  /* Remarks: 
+	   * - the weight of item i is stored in position i-1 of array w[];
+	   * - do not use '*' to multiply a variable and its coefficient;
+	   * - the constraints must be separated by \n (here there is only one constraint) 
+	   * - the method portaName enables to get the name of your variable for porta
+	   */
+	  String constraint = w[1 - 1] + " " + portaName("x" + 1);
 		
-		/* For each item */
-		for(int i = 2; i <= n; ++i)
-			constraint += " + " + w[i - 1] + " " + portaName("x" + i);
+	  /* For each item */
+	  for(int i = 2; i <= n; ++i)
+	    constraint += " + " + w[i - 1] + " " + portaName("x" + i);
 		
-		constraint += " <= " + K;
+	  constraint += " <= " + K;
 			
-		return constraint;
+	  return constraint;
 	}
   
   The class example.Knapsack is a good entry point to see how to use the software.
