@@ -17,13 +17,14 @@ A more flexible way to define formulations is to create a class which extends Ab
 1 - AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in the formulation thanks to the method AbstractFormulationGenerator.addVariable().
 
 Example of createVariables() method implementation for the knapsack problem:
+
 	protected void createVariables() {
 		
-		/* Register the knapsack formulation variables */
-		for(int i = 1; i <= n; ++i)
+	  /* Register the knapsack formulation variables */
+	  for(int i = 1; i <= n; ++i)
     
-      /* Add the variable "xi" which takes values between 0 and 1 */
-			this.addVariable(new Variable("x" + i, 0, 1));
+	    /* Add the variable "xi" which takes values between 0 and 1 */
+	    this.addVariable(new Variable("x" + i, 0, 1));
 	}
 
 
