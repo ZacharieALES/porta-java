@@ -12,7 +12,7 @@ import java.util.TreeSet;
 import exception.InvalidPCenterInputFile;
 import exception.UnknownCommandException;
 import exception.UnknownVariableName;
-import formulation.AbstractFormulationGenerator;
+import formulation.AbstractFormulation;
 import formulation.Variable;
 import utils.Dates;
 
@@ -27,7 +27,7 @@ import utils.Dates;
  * @author zach
  *
  */
-public class PCenterPCSC extends AbstractFormulationGenerator {
+public class PCenterPCSC extends AbstractFormulation {
 
 	String inputFile;
 
@@ -142,7 +142,7 @@ public class PCenterPCSC extends AbstractFormulationGenerator {
 	}
 
 	@Override
-	public String getInequalities() throws UnknownVariableName {
+	public String getConstraints() throws UnknownVariableName {
 
 		String output = "";
 

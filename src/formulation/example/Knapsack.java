@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 
 import exception.UnknownCommandException;
 import exception.UnknownVariableName;
-import formulation.AbstractFormulationGenerator;
+import formulation.AbstractFormulation;
 import formulation.LPReader;
 import formulation.Variable;
 
-public class Knapsack extends AbstractFormulationGenerator{
+public class Knapsack extends AbstractFormulation{
 
 	/** Number of items **/
 	int n;
@@ -236,7 +236,7 @@ public class Knapsack extends AbstractFormulationGenerator{
 	}
 
 	@Override
-	public String getInequalities() throws UnknownVariableName {
+	public String getConstraints() throws UnknownVariableName {
 		
 		/* Create the constraint 
 		 * 

@@ -25,9 +25,9 @@ public class PCenterPCOR extends PCenterPCSCZOrdered{
 
 
 	@Override
-	public String getInequalities() throws UnknownVariableName {
+	public String getConstraints() throws UnknownVariableName {
 
-		super.getInequalities();
+		super.getConstraints();
 		
 		String output = "";
 

@@ -23,7 +23,7 @@ import exception.UnknownVariableName;
 import utils.Command;
 
 
-public abstract class AbstractFormulationGenerator {
+public abstract class AbstractFormulation {
 
 	String sTmpFolder = "./.tmp";
 	String sTmpFileCanonicName = "tmp";
@@ -32,7 +32,7 @@ public abstract class AbstractFormulationGenerator {
 	public String sTmpConvertedFacetsFile = sTmpFolder + "/" + sTmpFileCanonicName + ".poi.ieq_converted";
 	public String sTmpConvertedIntegerPointsFile =  sTmpPOIFile + "_converted";
 
-	public AbstractFormulationGenerator() throws UnknownCommandException, IOException, InterruptedException{
+	public AbstractFormulation() throws UnknownCommandException, IOException, InterruptedException{
 		checkCommand("traf");
 		checkCommand("vint");
 		checkCommand("dim");
@@ -98,7 +98,7 @@ public abstract class AbstractFormulationGenerator {
 			bw.write("\n\nUPPER_BOUNDS\n");
 			bw.write(getUpperBound());
 			bw.write("\n\nINEQUALITIES_SECTION\n");
-			bw.write(getInequalities());
+			bw.write(getConstraints());
 			bw.write("\n\nEND\n");
 			
 			bw.write(getvariablesindex());
@@ -529,16 +529,17 @@ public abstract class AbstractFormulationGenerator {
 	 * - The left-hand side contains the variables.
 	 * - The right-hand side contains a numerical value.
 	 * - The operator is either: >=, <= or ==.
+	 * - A variable and its coefficients are separated by spaces not by '*'. 
 	 * 
 	 * Ex:
-	 * (2) x9  +  x4 - x1 - x2 - x3  <= 0
+	 * (2) 2 x9  +  x4 - x1 - x2 - x3  <= 0
 	 * (2) x6  + x1 <= 1
 	 * (2) x10  + x1 <= 1
 	 * 
 	 * @return A string which contains the constraints of the formulation
 	 * @throws UnknownVariableName 
 	 */
-	public abstract String getInequalities() throws UnknownVariableName;
+	public abstract String getConstraints() throws UnknownVariableName;
 
 	public void addVariable(Variable var){
 		int newId = variables.size()+1;

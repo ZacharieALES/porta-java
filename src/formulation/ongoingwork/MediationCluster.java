@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 
 import exception.UnknownCommandException;
 import exception.UnknownVariableName;
-import formulation.AbstractFormulationGenerator;
+import formulation.AbstractFormulation;
 import formulation.Variable;
 import utils.Dates;
 
@@ -19,7 +19,7 @@ import utils.Dates;
  * @author zach
  *
  */
-public class MediationCluster extends AbstractFormulationGenerator{
+public class MediationCluster extends AbstractFormulation{
 
 	int n = -1;
 	double[][] d;
@@ -113,7 +113,7 @@ public class MediationCluster extends AbstractFormulationGenerator{
 	}
 
 	@Override
-	public String getInequalities() throws UnknownVariableName {
+	public String getConstraints() throws UnknownVariableName {
 
 		String output = "";
 

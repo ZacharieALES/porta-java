@@ -37,7 +37,7 @@ import lpterms.VariableTerm;
  * @author zach
  *
  */
-public class LPReader extends AbstractFormulationGenerator{
+public class LPReader extends AbstractFormulation{
 
 	String constraints = "";
 	public enum Section{
@@ -59,7 +59,7 @@ public class LPReader extends AbstractFormulationGenerator{
 	 * The constraints are created in the constructor
 	 */
 	@Override
-	public String getInequalities() throws UnknownVariableName {
+	public String getConstraints() throws UnknownVariableName {
 		return constraints;
 	}
 

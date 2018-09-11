@@ -18,7 +18,7 @@ public class PCenterPCSCZOrdered extends PCenterPCSC{
 
 
 	@Override
-	public String getInequalities() throws UnknownVariableName {
+	public String getConstraints() throws UnknownVariableName {
 
 		String output = "";
 
