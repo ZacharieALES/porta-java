@@ -72,7 +72,7 @@ A more flexible way to define formulations is to create a class which extends Ab
     ```
   
   ### The knapsack example
-  The class Knapsack in the package "example" is a good entry point to see how to use the software.
+  The class Knapsack in the package "example" is a good entry point to see how to use the software on the [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem#Definition).
   
   ## Feedbacks are welcome
   We are in the early stage of this project so bugs and limitations are to be expected. I would be most grateful if you could report to me any bug, comment or suggestion that you might have (through the github issue system or directly by mail zacharie.ales[at]ensta[dot]fr).
