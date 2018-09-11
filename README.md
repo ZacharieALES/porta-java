@@ -18,7 +18,7 @@ For a given polytope P, this project currently enables to:
 * It currently does not work on windows (contributions on that part or another are welcome).
 * Porta commands must be in your path.
  
- ### Formulation definition
+ ### How to define a formulation?
  Currently the only way to define an integer polytope is by providing a linear formulation.
  
  #### Defining a formulation from an LP file
@@ -68,6 +68,26 @@ A more flexible way to define formulations is to create a class for your problem
       return constraint;
     }
     ```
+  
+  ### How to use porta features once a formulation is defined?
+  
+  Once an AbstractFormulation object is defined, the associated integer polytope can be analyzed as follows.
+  
+  #### How to get the list of the integer points in the polytope?
+  Use the AbstractFormulation.getIntegerPoints() method:
+  
+      System.out.println(formulation.getIntegerPoints());
+      
+  #### How to get the dimension of the polytope?
+  Use the AbstractFormulation.getDimension() method:
+  
+      System.out.println(formulation.getDimension());
+      
+  #### How to get the facets of the polytope?
+  Use the AbstractFormulation.getFacets() method:
+  
+      System.out.println(formulation.getFacets());
+      
   
   ### The knapsack example
   The class Knapsack in the package "example" is a good entry point to see how to use the software on the [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem#Definition).
