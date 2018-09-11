@@ -31,45 +31,45 @@ A more flexible way to define formulations is to create a class which extends Ab
 
 1. AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in the formulation thanks to the method AbstractFormulationGenerator.addVariable().
 
-        ```
-        /* Example of createVariables() method implementation for the knapsack problem 
-	 * (https://en.wikipedia.org/wiki/Knapsack_problem#Definition)
-	 */
-	protected void createVariables() {
+    ```
+    /* Example of createVariables() method implementation for the knapsack problem 
+     * (https://en.wikipedia.org/wiki/Knapsack_problem#Definition)
+     */
+    protected void createVariables() {
 		
-	  for(int i = 1; i <= n; ++i)
+      for(int i = 1; i <= n; ++i)
     
-	    /* Add the variable "xi" which takes values between 0 and 1 */
-	    this.addVariable(new Variable("x" + i, 0, 1));
-	}
-	```
+        /* Add the variable "xi" which takes values between 0 and 1 */
+        this.addVariable(new Variable("x" + i, 0, 1));
+    }
+    ```
 
 
 2. String getInequalities(): this method is used to create a string which contains all the formulation inequalities thanks to the method AbstractFormulationGenerator.getInequalities().
 
-        ```
-        /* Example of getInequalities() method implementation for the knapsack problem
-	 * (https://en.wikipedia.org/wiki/Knapsack_problem#Definition)
-	 */
-	public String getInequalities() throws UnknownVariableName {
+    ```
+    /* Example of getInequalities() method implementation for the knapsack problem
+     * (https://en.wikipedia.org/wiki/Knapsack_problem#Definition)
+     */
+    public String getInequalities() throws UnknownVariableName {
 	
-	  /* Remarks: 
-	   * - the weight of item i is stored in position i-1 of array w[];
-	   * - do not use '*' to multiply a variable and its coefficient;
-	   * - the constraints must be separated by \n (here there is only one constraint) 
-	   * - the method portaName() enables to get the name of your variable for porta
-	   */
-	  String constraint = w[1 - 1] + " " + portaName("x" + 1);
+      /* Remarks: 
+       * - the weight of item i is stored in position i-1 of array w[];
+       * - do not use '*' to multiply a variable and its coefficient;
+       * - the constraints must be separated by \n (here there is only one constraint) 
+       * - the method portaName() enables to get the name of your variable for porta
+       */
+      String constraint = w[1 - 1] + " " + portaName("x" + 1);
 		
-	  /* For each item */
-	  for(int i = 2; i <= n; ++i)
-	    constraint += " + " + w[i - 1] + " " + portaName("x" + i);
-		
-	  constraint += " <= " + K;
-			
-	  return constraint;
-	}
-	```
+      /* For each item */
+      for(int i = 2; i <= n; ++i)
+        constraint += " + " + w[i - 1] + " " + portaName("x" + i);
+    	
+      constraint += " <= " + K;
+    		
+      return constraint;
+    }
+    ```
   
   ### The knapsack example
   The class Knapsack in the package "example" is a good entry point to see how to use the software.
