@@ -12,14 +12,14 @@ For a given polytope P, this project currently enables to:
 * find the dimension and the hyperplans which include P;
 * find the facets of P.
 
-## Prerequisites
+ ## How to use porta-java?
+
+### Prerequisites
 * It currently does not work on windows (contributions on that part or another are welcome).
 * Porta commands must be in the path.
-
- ## How to use it
- Currently the only way to define an integer polytope is by providing a linear formulation.
  
  ### Formulation definition
+ Currently the only way to define an integer polytope is by providing a linear formulation.
  
  #### Defining a formulation from an LP file
 The easiest way to define a formulation is to use a [CPLEX lp file](http://lpsolve.sourceforge.net/5.1/CPLEX-format.htm) using the LPReader class :
