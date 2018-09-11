@@ -6,13 +6,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
 import exception.InvalidPCenterInputFile;
+import exception.UnknownCommandException;
 import exception.UnknownVariableName;
 import formulation.AbstractFormulationGenerator;
 import formulation.Variable;
@@ -63,9 +63,13 @@ public class PCenterPCRad extends AbstractFormulationGenerator {
 	 * @param inputFile
 	 * @throws IOException 
 	 * @throws InvalidPCenterInputFile 
+	 * @throws UnknownCommandException 
+	 * @throws InterruptedException 
 	 */
-	public PCenterPCRad(String inputFile) throws IOException, InvalidPCenterInputFile{
+	public PCenterPCRad(String inputFile) throws IOException, InvalidPCenterInputFile, UnknownCommandException, InterruptedException{
 
+		super();
+		
 		this.inputFile = inputFile;
 
 		InputStream ips=new FileInputStream(inputFile); 
@@ -236,7 +240,7 @@ public class PCenterPCRad extends AbstractFormulationGenerator {
 
 		try {
 			
-			int pMax = 5;
+//			int pMax = 5;
 			String date = Dates.date();
 			String folderPath = "./res/" + date + "/"; 
 			File f = new File(folderPath);

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import exception.UnknownCommandException;
 import exception.UnknownVariableName;
 import formulation.AbstractFormulationGenerator;
 import formulation.LPReader;
@@ -50,12 +51,12 @@ public class Knapsack extends AbstractFormulationGenerator{
 			/* or by directly giving its attributes */
 			Knapsack formulation3 = new Knapsack(6, 12, new int[] {1, 3, 2, 4, 6, 4}, new int[] {1, 5, 3, 5, 2, 3});
 
-			Use whatToDo = Use.INTEGER_POINTS;
+			Use whatToDo = Use.DIMENSION;
 		
 			switch(whatToDo) {
 			case DIMENSION: System.out.println(formulation.getDimension()); break;
-			case FACETS: System.out.println(formulation.getFacets()); break;
-			case INTEGER_POINTS: System.out.println(formulation.getIntegerPoints()); break;
+			case FACETS: System.out.println(formulation2.getFacets()); break;
+			case INTEGER_POINTS: System.out.println(formulation3.getIntegerPoints()); break;
 			}
 			
 		} catch (Exception e) {
@@ -69,8 +70,13 @@ public class Knapsack extends AbstractFormulationGenerator{
 	 * @param n
 	 * @param w
 	 * @param p
+	 * @throws UnknownCommandException 
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public Knapsack(int n, int K, int[] w, int[] p) {
+	public Knapsack(int n, int K, int[] w, int[] p) throws UnknownCommandException, IOException, InterruptedException {
+		
+		super();
 		this.n = n;
 		this.K = K;
 		this.w = w;
@@ -89,9 +95,14 @@ public class Knapsack extends AbstractFormulationGenerator{
 	 * The line which contains the value of n must appear before the two others.
 	 * Lines which do not contain "n =", "w =" or "p =" will be ignored.
 	 * @param inputFile
+	 * @throws UnknownCommandException 
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public Knapsack(String inputFile) {
+	public Knapsack(String inputFile) throws UnknownCommandException, IOException, InterruptedException {
 
+		super();
+		
 		try{
 			InputStream ips=new FileInputStream(inputFile);
 			InputStreamReader ipsr=new InputStreamReader(ips);

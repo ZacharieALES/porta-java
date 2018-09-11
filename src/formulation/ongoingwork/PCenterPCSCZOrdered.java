@@ -6,13 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import exception.InvalidPCenterInputFile;
+import exception.UnknownCommandException;
 import exception.UnknownVariableName;
-import utils.Command;
 
 public class PCenterPCSCZOrdered extends PCenterPCSC{
 
 	public PCenterPCSCZOrdered(String inputFile) throws IOException,
-	InvalidPCenterInputFile {
+	InvalidPCenterInputFile, UnknownCommandException, InterruptedException {
 		super(inputFile);
 	}
 

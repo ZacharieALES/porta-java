@@ -8,12 +8,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import exception.InvalidIEQFileFormatException;
+import exception.UnknownCommandException;
 import exception.UnknownVariableName;
 import utils.Command;
 
@@ -27,6 +32,29 @@ public abstract class AbstractFormulationGenerator {
 	public String sTmpConvertedFacetsFile = sTmpFolder + "/" + sTmpFileCanonicName + ".poi.ieq_converted";
 	public String sTmpConvertedIntegerPointsFile =  sTmpPOIFile + "_converted";
 
+	public AbstractFormulationGenerator() throws UnknownCommandException, IOException, InterruptedException{
+		checkCommand("traf");
+		checkCommand("vint");
+		checkCommand("dim");
+	}
+	
+	/**
+	 * Test if a linux command exists on the system and throw an exception otherwise
+	 * @param command The name of the command
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 */
+	private void checkCommand(String command) throws UnknownCommandException, IOException, InterruptedException{
+			
+		boolean existsInPath = Stream.of(System.getenv("PATH").split(Pattern.quote(File.pathSeparator)))
+		        .map(Paths::get)
+		        .anyMatch(path -> Files.exists(path.resolve(command)));
+		
+		if(!existsInPath) {
+			throw new UnknownCommandException(command);
+		}
+	}
+	
 	private void initializeVariables(){
 
 		if(variables.size() == 0)
@@ -712,7 +740,7 @@ public abstract class AbstractFormulationGenerator {
 	protected static String dim(String inputFile){
 		
 		String result = Command.execute("dim " + inputFile);
-		
+
 		String[] sResult = result.split("DIMENSION OF THE POLYHEDRON");
 		
 		if(sResult.length > 1)

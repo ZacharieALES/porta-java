@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exception.InvalidPCenterInputFile;
+import exception.UnknownCommandException;
 import exception.UnknownVariableName;
 import lpterms.AbstractTerm;
 import lpterms.CoefficientTerm;
@@ -62,7 +63,8 @@ public class LPReader extends AbstractFormulationGenerator{
 		return constraints;
 	}
 
-	public LPReader(String lpfile) throws IOException, InvalidPCenterInputFile {
+	public LPReader(String lpfile) throws IOException, InvalidPCenterInputFile, UnknownCommandException, InterruptedException {
+		super();
 		this.inputFile = lpfile;
 	}
 
@@ -457,7 +459,7 @@ public class LPReader extends AbstractFormulationGenerator{
 			String initialPOIFile = "./data/sncf3lp.poi";
 			String trafOutputFile = initialPOIFile.replace(".poi", ".poi.ieq");
 			formulation.generateFormulation();
-			String output = formulation.dim(initialPOIFile);
+			String output = dim(initialPOIFile);
 
 			output = formulation.replacePortaVariablesInString(output);
 			

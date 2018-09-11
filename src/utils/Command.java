@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 
-import exception.UnknownVariableName;
-import formulation.AbstractFormulationGenerator;
-
 
 public class Command {
 	

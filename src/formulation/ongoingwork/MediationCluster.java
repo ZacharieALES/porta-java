@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import exception.UnknownCommandException;
 import exception.UnknownVariableName;
 import formulation.AbstractFormulationGenerator;
 import formulation.Variable;
@@ -25,8 +26,10 @@ public class MediationCluster extends AbstractFormulationGenerator{
 	String inputFile;
 	double alpha, beta;
 
-	public MediationCluster(String inputFile, double alpha, double beta) {
+	public MediationCluster(String inputFile, double alpha, double beta) throws UnknownCommandException, IOException, InterruptedException {
 
+		super();
+		
 		this.inputFile = inputFile;
 
 		this.alpha = alpha;

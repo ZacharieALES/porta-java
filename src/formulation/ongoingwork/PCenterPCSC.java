@@ -10,10 +10,10 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import exception.InvalidPCenterInputFile;
+import exception.UnknownCommandException;
 import exception.UnknownVariableName;
 import formulation.AbstractFormulationGenerator;
 import formulation.Variable;
-import utils.Command;
 import utils.Dates;
 
 /**
@@ -59,9 +59,13 @@ public class PCenterPCSC extends AbstractFormulationGenerator {
 	 * @param inputFile
 	 * @throws IOException 
 	 * @throws InvalidPCenterInputFile 
+	 * @throws UnknownCommandException 
+	 * @throws InterruptedException 
 	 */
-	public PCenterPCSC(String inputFile) throws IOException, InvalidPCenterInputFile{
+	public PCenterPCSC(String inputFile) throws IOException, InvalidPCenterInputFile, UnknownCommandException, InterruptedException{
 
+		super();
+		
 		this.inputFile = inputFile;
 
 		InputStream ips=new FileInputStream(inputFile); 
