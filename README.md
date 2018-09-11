@@ -29,7 +29,7 @@ The easiest way to define a formulation is to import a [CPLEX lp file](http://lp
 #### Defining a formulation by extending the class AbstractFormulationGenerator
 A more flexible way to define formulations is to create a class for your problem which extends AbstractFormulationGenerator. In that case, you need to implement two abstract methods :
 
-1. AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in your formulation thanks to the method AbstractFormulationGenerator.addVariable().
+1. AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in your formulation thanks to the method AbstractFormulationGenerator.registerVariable().
 
     ```
     /* Example of createVariables() method implementation for the knapsack problem 
@@ -40,7 +40,7 @@ A more flexible way to define formulations is to create a class for your problem
       for(int i = 1; i <= n; ++i)
     
         /* Add the variable named "xi" which takes integer values between 0 and 1 */
-        this.addVariable(new Variable("x" + i, 0, 1));
+        this.registerVariable(new Variable("x" + i, 0, 1));
     }
     ```
 
@@ -99,4 +99,5 @@ A more flexible way to define formulations is to create a class for your problem
   ## Considered new features
   * Definition of polytopes through their integer points rather than their formulations (useful when porta takes time to compute the integer solutions from the formulation);
   * Better handling of the .lp format (in particular keywords "free" and "infinity" are  not currently taken into account);
-  * Manage more porta features and options.
+  * Manage more porta features and options;
+  * Get the results in latex.

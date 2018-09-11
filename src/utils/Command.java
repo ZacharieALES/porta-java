@@ -3,7 +3,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import exception.UnknownCommandException;
 
 
 public class Command {
@@ -76,6 +83,24 @@ public class Command {
         }
         
         return f;
+	}
+
+
+	/**
+	 * Test if a linux command exists on the system. Throw an exception otherwise
+	 * @param command The name of the command
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 */
+	public static void checkCommand(String command) throws UnknownCommandException, IOException, InterruptedException{
+
+		boolean existsInPath = Stream.of(System.getenv("PATH").split(Pattern.quote(File.pathSeparator)))
+				.map(Paths::get)
+				.anyMatch(path -> Files.exists(path.resolve(command)));
+
+		if(!existsInPath) {
+			throw new UnknownCommandException(command);
+		}
 	}
 	
 }

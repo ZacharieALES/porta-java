@@ -39,7 +39,14 @@ import lpterms.VariableTerm;
  */
 public class LPReader extends AbstractFormulation{
 
+	/** String which represents the formulation constraints */
 	String constraints = "";
+	
+	/**
+	 * List of the potential sections in an lp file
+	 * @author zach
+	 *
+	 */
 	public enum Section{
 		BINARIES, GENERALS, CONSTRAINTS, OBJECTIVE, NONE, END, BOUNDS
 	}
@@ -49,6 +56,8 @@ public class LPReader extends AbstractFormulation{
 	@Override
 	protected void createVariables() {
 		try {
+			
+			/* The variables are registered directly when the lp file is read */
 			readLPFile();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -56,7 +65,7 @@ public class LPReader extends AbstractFormulation{
 	}
 
 	/**
-	 * The constraints are created in the constructor
+	 * The constraints have already been created when the lp file has been read in the constructor
 	 */
 	@Override
 	public String getConstraints() throws UnknownVariableName {
@@ -107,6 +116,11 @@ public class LPReader extends AbstractFormulation{
 		return newSection;
 	}
 
+	/**
+	 * Test if an expression is an operator or not
+	 * @param expression
+	 * @return
+	 */
 	public boolean isAnOperator(String expression) {
 
 		return "+".equals(expression)
@@ -119,6 +133,10 @@ public class LPReader extends AbstractFormulation{
 
 	}
 
+	/**
+	 * Read an lp file. Register the variables and fill the attribute "constraints" with all the formulation constraints
+	 * @throws IOException
+	 */
 	public void readLPFile() throws IOException {
 
 		constraints = "";
@@ -136,8 +154,6 @@ public class LPReader extends AbstractFormulation{
 
 		/* While there are line and the problem definition is not over */
 		while ((line=br.readLine())!=null && cSection != Section.END){
-			
-//			System.out.println("Reading line: " + line);
 
 			/* Preprocess and split by spaces the line */
 			line = preprocessLine(line.trim());
@@ -233,6 +249,14 @@ public class LPReader extends AbstractFormulation{
 
 	}
 
+	/**
+	 * Manage an expression depending on its section:
+	 * - if it is in the constraint section, create the corresponding porta constraint;
+	 * - if it is in the binary or the bound section, change the bounds of the variables;
+	 * @param currentExpression The list of terms which are in the constraint
+	 * @param cSection The constraint if it is in the constraint section, an empty String otherwise
+	 * @return
+	 */
 	private String processExpression(List<AbstractTerm> currentExpression, Section cSection) {
 
 		String result = "";
@@ -243,15 +267,9 @@ public class LPReader extends AbstractFormulation{
 
 				boolean isValid = isConstraintValid(currentExpression);
 
-				if(isValid) {
+				if(isValid) 
 					for(AbstractTerm at: currentExpression)
 						result += at.expression + " ";
-					
-//					System.out.println("Add constraint \"" + currentExpression);
-				}
-				
-				
-
 			}
 
 			else if(cSection == Section.BINARIES) {
@@ -348,6 +366,11 @@ public class LPReader extends AbstractFormulation{
 		return result;
 	}
 
+	/**
+	 * Check if a list of terms corresponds to a valid constraint
+	 * @param currentExpression
+	 * @return
+	 */
 	private boolean isConstraintValid(List<AbstractTerm> currentExpression) {
 
 		boolean isValid = true;
@@ -403,6 +426,11 @@ public class LPReader extends AbstractFormulation{
 		return isValid;
 	}
 
+	/**
+	 * Clean a line (remove comments and replace all spaces and tabulations between terms by a single space)
+	 * @param line 
+	 * @return The preprocessed String
+	 */
 	private String preprocessLine(String line) {
 
 		/* First remove the potential comments */
@@ -448,41 +476,5 @@ public class LPReader extends AbstractFormulation{
 
 		return line.trim();
 	}
-
-	public static void main(String[] args){
-
-		try {
-			String inputFile = "./data/sncf3.lp";
-			String outputFile = "./data/sncf3_facets.ieq";
-			LPReader formulation = new LPReader(inputFile);
-
-			String initialPOIFile = "./data/sncf3lp.poi";
-			String trafOutputFile = initialPOIFile.replace(".poi", ".poi.ieq");
-			formulation.generateFormulation();
-			String output = dim(initialPOIFile);
-
-			output = formulation.replacePortaVariablesInString(output);
-			
-			System.out.println("===== Print dim output: \n" + output);
-			
-			System.out.println("=== Get the facets (input: " + initialPOIFile + ", output: " + trafOutputFile + ")");
-			traf(initialPOIFile);
-
-			System.out.println("=== Convert facets (input: " + trafOutputFile + ", output: " + outputFile + ")");
-			formulation.convertIEQFile(trafOutputFile, outputFile, true);
-			
-////			System.exit(0);
-//			System.out.println(formulation.getDimension());
-//
-//			formulation.getFacets("./.tmp/facet.ieq");
-//
-//			formulation.convertPOIFile("./.tmp/tmp.poi", "./.tmp/" + inputFile + "_ordered_converted_integer_points.poi");
-//			formulation.convertIEQFile("./.tmp/tmp.ieq", "./.tmsncf1.lpp/" + inputFile + "_ordered_converted_formulation.ieq", false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
 
 }

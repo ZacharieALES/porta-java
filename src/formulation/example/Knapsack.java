@@ -232,7 +232,7 @@ public class Knapsack extends AbstractFormulation{
 		
 		/* Register the knapsack formulation variables */
 		for(int i = 1; i <= n; ++i)
-			this.addVariable(new Variable("x" + i, 0, 1));
+			this.registerVariable(new Variable("x" + i, 0, 1));
 	}
 
 	@Override

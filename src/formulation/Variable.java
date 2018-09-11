@@ -1,5 +1,10 @@
 package formulation;
 
+/**
+ * Represents a variable and its bounds
+ * @author zach
+ *
+ */
 public class Variable {
 	
 	public String originalName;

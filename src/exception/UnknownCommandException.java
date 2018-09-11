@@ -2,11 +2,9 @@ package exception;
 
 @SuppressWarnings("serial")
 public class UnknownCommandException extends Exception{
-	
-	String commandName;
-	
+		
 	public UnknownCommandException(String name) {
-		this.commandName = name;
+		super("Unable to find the command \"" + name + "\" in your path.");
 	}
 
 }

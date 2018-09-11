@@ -132,12 +132,12 @@ public class PCenterPCSC extends AbstractFormulation {
 		it.next();
 
 		for(int i = 1; i <= K() ; i++){
-			addVariable(new Variable("z" + i, 0, 1));
+			registerVariable(new Variable("z" + i, 0, 1));
 			System.out.println("z" + i + ": distance: " + it.next()) ;
 		}
 
 		for(int i = 1 ; i <= M ; i++)
-			addVariable(new Variable("y" + i, 0, 1));
+			registerVariable(new Variable("y" + i, 0, 1));
 
 	}
 

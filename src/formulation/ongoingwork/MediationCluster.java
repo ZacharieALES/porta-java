@@ -96,14 +96,14 @@ public class MediationCluster extends AbstractFormulation{
 	protected void createVariables() {
 		for(int i = 0; i < n; i++) {
 
-			addVariable(new Variable("m" + i, 0, 1));
+			registerVariable(new Variable("m" + i, 0, 1));
 
 			for(int j = i+1; j < n; j++) {
-				addVariable(new Variable(xName(i,j), 0, 1));
+				registerVariable(new Variable(xName(i,j), 0, 1));
 
 				if(d[i][j] != 0) {
-					addVariable(new Variable(tName(i,j), 0, 1));
-					addVariable(new Variable(zName(i,j), 0, 1));
+					registerVariable(new Variable(tName(i,j), 0, 1));
+					registerVariable(new Variable(zName(i,j), 0, 1));
 				}
 				else {
 					System.out.println(i + ", " + j);

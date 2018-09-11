@@ -18,7 +18,7 @@ public class PCenterPCOR extends PCenterPCSCZOrdered{
 	public void createVariables() {
 
 		super.createVariables();
-		addVariable(new Variable("kStar", 0, K()));
+		registerVariable(new Variable("kStar", 0, K()));
 
 	}
 

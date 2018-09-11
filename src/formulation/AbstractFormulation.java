@@ -8,14 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import exception.InvalidIEQFileFormatException;
 import exception.UnknownCommandException;
@@ -32,29 +28,19 @@ public abstract class AbstractFormulation {
 	public String sTmpConvertedFacetsFile = sTmpFolder + "/" + sTmpFileCanonicName + ".poi.ieq_converted";
 	public String sTmpConvertedIntegerPointsFile =  sTmpPOIFile + "_converted";
 
-	public AbstractFormulation() throws UnknownCommandException, IOException, InterruptedException{
-		checkCommand("traf");
-		checkCommand("vint");
-		checkCommand("dim");
-	}
-	
 	/**
-	 * Test if a linux command exists on the system and throw an exception otherwise
-	 * @param command The name of the command
-	 * @throws IOException 
-	 * @throws InterruptedException 
+	 * At the creation of a formulation, check that the required commands are visible
+	 * @throws UnknownCommandException
+	 * @throws IOException
+	 * @throws InterruptedException
 	 */
-	private void checkCommand(String command) throws UnknownCommandException, IOException, InterruptedException{
-			
-		boolean existsInPath = Stream.of(System.getenv("PATH").split(Pattern.quote(File.pathSeparator)))
-		        .map(Paths::get)
-		        .anyMatch(path -> Files.exists(path.resolve(command)));
-		
-		if(!existsInPath) {
-			throw new UnknownCommandException(command);
-		}
+	public AbstractFormulation() throws UnknownCommandException, IOException, InterruptedException{
+		Command.checkCommand("traf");
+		Command.checkCommand("vint");
+		Command.checkCommand("dim");
 	}
-	
+
+	/* Create the variables if necessary */
 	private void initializeVariables(){
 
 		if(variables.size() == 0)
@@ -68,23 +54,33 @@ public abstract class AbstractFormulation {
 	/** Hashmap which contains all id in porta indexed by their original name */
 	private HashMap<String, Integer> variablesBis = new HashMap<>();
 
+	/**
+	 * Generate the formulation in the default file
+	 * @throws UnknownVariableName
+	 */
 	public void generateFormulation() throws UnknownVariableName{
-//		System.out.println("Generate formulation in : "+ sTmpIEQFile);
+		//		System.out.println("Generate formulation in : "+ sTmpIEQFile);
 		generateFormulation(sTmpIEQFile);
 	}
 
-	public void generateFormulation(String sTmpIEQFile) throws UnknownVariableName{
+	/** Generate the formulation in a specified file
+	 * @param ieqFile The considered file
+	 * @throws UnknownVariableName
+	 */
+	public void generateFormulation(String ieqFile) throws UnknownVariableName{
 
-		File tmpFile = new File(sTmpIEQFile);
+		File tmpFile = new File(ieqFile);
 
 		String parentPath = tmpFile.getParent();
 		File tmpFolder = new File(parentPath);
 
+		/* Create the temporary folder if necessary */
 		if(!tmpFolder.exists())
 			tmpFolder.mkdir();
 
 		initializeVariables();
 
+		/* Create the porta ieq file */ 
 		FileWriter fw;
 		try {
 			fw = new FileWriter(tmpFile);
@@ -100,7 +96,7 @@ public abstract class AbstractFormulation {
 			bw.write("\n\nINEQUALITIES_SECTION\n");
 			bw.write(getConstraints());
 			bw.write("\n\nEND\n");
-			
+
 			bw.write(getvariablesindex());
 			bw.flush();
 			bw.close();
@@ -112,19 +108,23 @@ public abstract class AbstractFormulation {
 
 	}
 
+	/**
+	 * Returns a string which contains the correspondence between the variables porta name and initial name. 
+	 * @return
+	 */
 	private String getvariablesindex() {
-		
+
 		String result = "\n\n===\nVariable correspondence\n===\n"
 				+ "Porta name\tOriginal name\n---\n";
-		
+
 		for(int i = 0; i < variables.size(); i++) {
-//			System.out.println(variables.get(i) == null);
-			
+			//			System.out.println(variables.get(i) == null);
+
 			if(variables.get(i) != null)
 				result += "x" + i + "\t\t" + variables.get(i).originalName + "\n";
 		}
 		result += "---";
-			
+
 		return result;
 	}
 
@@ -151,9 +151,9 @@ public abstract class AbstractFormulation {
 
 		while ((ligne=br.readLine())!=null){
 			String ligne2 = ligne;
-			
+
 			if(removeMinuses)
-				ligne2 = removeMinusesInInequalities(ligne);
+				ligne2 = removeMinusesInConstraints(ligne);
 			else {
 				ligne2.replaceAll("\\+", " + ");
 				ligne2.replaceAll("-", " - ");
@@ -164,17 +164,8 @@ public abstract class AbstractFormulation {
 				ligne2.replaceAll("  ", " ");
 				ligne2.replaceAll("  ", " ");
 			}
-				
-
-//			if(!ligne.equals(ligne2)) 
-//			{
-//				System.out.println("---");
-//				System.out.println(ligne);
-//				System.out.println(ligne2);
-//				System.out.println(replacePortaVariablesInString(ligne2));
-//			}
+			
 			bw.write(replacePortaVariablesInString(ligne2) + "\n");
-			//			bw.write(replacePortaVariablesInString(ligne) + "\n");
 			bw.flush();
 		}
 
@@ -183,6 +174,13 @@ public abstract class AbstractFormulation {
 
 	}
 
+	/**
+	 * Convert a poi file in which the variable have porta names into a file in which the variable have the user name
+	 * @param inputPOIFile
+	 * @param convertedPOIFile
+	 * @throws IOException
+	 * @throws UnknownVariableName
+	 */
 	public void convertPOIFile(String inputPOIFile, String convertedPOIFile) throws IOException, UnknownVariableName{
 
 		initializeVariables();
@@ -247,7 +245,12 @@ public abstract class AbstractFormulation {
 
 	}
 
-	private String removeMinusesInInequalities(String s) {
+	/**
+	 * To ease the readibility of the constraints, change the side of the terms of the constraints which have a negative coefficient 
+	 * @param s String which contains the constraint
+	 * @return
+	 */
+	private String removeMinusesInConstraints(String s) {
 
 		/* Position of the character '-' or '+' of the current variable */
 		int currentSignPosition = -2;
@@ -381,6 +384,12 @@ public abstract class AbstractFormulation {
 		return result;
 	}
 
+	/**
+	 * Replace the variable porta name into user name in a String 
+	 * @param s The considered String
+	 * @return A string in which the porta names are converted
+	 * @throws UnknownVariableName
+	 */
 	protected String replacePortaVariablesInString(String s) throws UnknownVariableName{
 
 		/* Add spaces before and after operators to ease the parsing */
@@ -449,22 +458,7 @@ public abstract class AbstractFormulation {
 	protected abstract void createVariables();
 
 	/** 
-	 * Get a valid point.
-	 * Ex:
-	 * 0 1 1 0 2
-	 * @return Valid point represented by a String which contains the value of each variable ordered by their index in porta
-	 */
-	public String getValidPoint(){
-		String result = "";
-
-		// TODO Récupérer valeur dans le fichier poi
-
-		return result;
-
-	}
-
-	/** 
-	 * Get an upper bound.
+	 * Get the variables lower bound in the format that porta wants.
 	 * Ex:
 	 * 0 0 0 0 0 
 	 * @return Lower bound of each variable ordered by porta index
@@ -474,16 +468,16 @@ public abstract class AbstractFormulation {
 		String result = "";
 
 		for(Entry<Integer, Variable> entry: variables.entrySet()) {
-			
+
 			if(entry.getValue().lowerBoundDenominator != 1) {
-				
+
 				int lb = entry.getValue().lowerBoundNumerator / entry.getValue().lowerBoundDenominator;
-				
+
 				if(Math.abs(lb - (entry.getValue().lowerBoundNumerator / entry.getValue().lowerBoundDenominator)) > 0.0001) {				
 					System.err.println("Error: AbstractFormulationGeneration.getLowerBound: this software is currently unable to consider non integer variable bounds");
 					System.err.println("The lower bound of variable \"" + entry.getValue().originalName + "\" is set to " + lb + " instead of " + entry.getValue().lowerBoundNumerator + "/" + entry.getValue().lowerBoundDenominator);
 				}
-				
+
 			}
 			else
 				result += entry.getValue().lowerBoundNumerator + " ";
@@ -494,7 +488,7 @@ public abstract class AbstractFormulation {
 	}
 
 	/** 
-	 * Get an upper bound.
+	 * Get the variables upper bound in the format that porta wants.
 	 * Ex:
 	 * 1 1 1 1 3
 	 * @return Upper bound of each variable ordered by porta index
@@ -504,16 +498,16 @@ public abstract class AbstractFormulation {
 		String result = "";
 
 		for(Entry<Integer, Variable> entry: variables.entrySet()) {
-			
+
 			if(entry.getValue().upperBoundDenominator != 1) {
-				
+
 				int ub = entry.getValue().upperBoundNumerator / entry.getValue().upperBoundDenominator;
 
 				if(Math.abs(ub - (entry.getValue().upperBoundNumerator / entry.getValue().upperBoundDenominator)) > 0.0001) {	
 					System.err.println("Error: AbstractFormulationGeneration.getUpperBound: this software is currently unable to consider non integer variable bounds");
 					System.err.println("The upper bound of variable \"" + entry.getValue().originalName + "\" is set to " + ub + " instead of " + entry.getValue().upperBoundNumerator + "/" + entry.getValue().upperBoundDenominator);
 				}
-				
+
 			}
 			else
 				result += entry.getValue().upperBoundNumerator + " ";
@@ -541,12 +535,14 @@ public abstract class AbstractFormulation {
 	 */
 	public abstract String getConstraints() throws UnknownVariableName;
 
-	public void addVariable(Variable var){
+	/**
+	 * Register a new variable used in the formulation
+	 * @param var
+	 */
+	public void registerVariable(Variable var){
 		int newId = variables.size()+1;
 		variables.put(newId, var);
 		variablesBis.put(var.originalName, newId);
-		
-//		System.out.println("var " + var.originalName + "  " + newId );
 	}
 
 	/**
@@ -558,16 +554,6 @@ public abstract class AbstractFormulation {
 	public String portaName(String variableOriginalName) throws UnknownVariableName{
 
 		Integer id = variablesBis.get(variableOriginalName);
-		//		String result = null;
-		//		
-		//		Iterator<Entry<Integer, Variable>> it = variables.entrySet().iterator();
-		//		
-		//		while(result == null && it.hasNext()){
-		//			Entry<Integer, Variable> entry = it.next();
-		//			
-		//			if(variableOriginalName.equals(entry.getValue().originalName))
-		//				result = "x" + entry.getKey();
-		//		}
 
 		if(id == null)
 			throw new UnknownVariableName(variableOriginalName);
@@ -577,19 +563,24 @@ public abstract class AbstractFormulation {
 		return result;
 
 	}
-	
-	public boolean isDefined(String variableOriginalName) {
+
+	/**
+	 * Check if a variable is registered
+	 * @param variableOriginalName
+	 * @return
+	 */
+	public boolean isRegistered(String variableOriginalName) {
 		return variablesBis.get(variableOriginalName) != null;
 	}
-	
+
 
 	public void setLBound(String varOriginalName, Integer lbound) {
 		setLBound(varOriginalName, lbound, 1);
 	}
-	
+
 	public void setLBound(String varOriginalName, Integer lboundNumerator, Integer lboundDenominator) {
 		Integer portaId = variablesBis.get(varOriginalName);
-		
+
 		if(portaId != null) {
 			variables.get(portaId).lowerBoundNumerator = lboundNumerator;
 			variables.get(portaId).lowerBoundDenominator = lboundDenominator;
@@ -599,10 +590,10 @@ public abstract class AbstractFormulation {
 	public void setUBound(String varOriginalName, Integer ubound) {
 		setUBound(varOriginalName, ubound, 1);
 	}
-	
+
 	public void setUBound(String varOriginalName, Integer uboundNumerator, Integer uboundDenominator) {
 		Integer portaId = variablesBis.get(varOriginalName);
-		
+
 		if(portaId != null) {
 			variables.get(portaId).upperBoundNumerator = uboundNumerator;
 			variables.get(portaId).upperBoundDenominator = uboundDenominator;
@@ -635,7 +626,7 @@ public abstract class AbstractFormulation {
 		return output;
 
 	}
-	
+
 	public String getIntegerPoints() throws UnknownVariableName, InvalidIEQFileFormatException, IOException {
 
 		String results = "";
@@ -647,53 +638,53 @@ public abstract class AbstractFormulation {
 		vint(sTmpIEQFile);
 
 		convertPOIFile(sTmpPOIFile, sTmpConvertedIntegerPointsFile);
-		
+
 		try{
-		  InputStream ips=new FileInputStream(sTmpConvertedIntegerPointsFile);
-		  InputStreamReader ipsr=new InputStreamReader(ips);
-		  BufferedReader br=new BufferedReader(ipsr);
-		  String line;
-		  
-		  while ((line=br.readLine())!=null)
-				  results += line + "\n";
-				
-		  br.close();
+			InputStream ips=new FileInputStream(sTmpConvertedIntegerPointsFile);
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String line;
+
+			while ((line=br.readLine())!=null)
+				results += line + "\n";
+
+			br.close();
 		}catch(Exception e){
-		  System.out.println(e.toString());
+			System.out.println(e.toString());
 		}
-		
+
 		return results;
 	}
-	
+
 	public String getFacets() throws UnknownVariableName, InvalidIEQFileFormatException, IOException {
-		
+
 		String results = "";
-		
+
 		getFacets(sTmpConvertedFacetsFile);
 		try{
-		  InputStream ips=new FileInputStream(sTmpConvertedFacetsFile);
-		  InputStreamReader ipsr=new InputStreamReader(ips);
-		  BufferedReader br=new BufferedReader(ipsr);
-		  String line;
-		  String facetsSection = "INEQUALITIES_SECTION";
-		  String endSection = "END";
-		  boolean isInFacetsSection = false;
-		  
-		  while ((line=br.readLine())!=null){
-			  
-			  if(line.contains(facetsSection))
-				  isInFacetsSection = true;
-			  else if(line.contains(endSection))
-				  isInFacetsSection = false;
-			  else if(isInFacetsSection)
-				  results += line + "\n";
-				
-		  }
-		  br.close();
+			InputStream ips=new FileInputStream(sTmpConvertedFacetsFile);
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String line;
+			String facetsSection = "INEQUALITIES_SECTION";
+			String endSection = "END";
+			boolean isInFacetsSection = false;
+
+			while ((line=br.readLine())!=null){
+
+				if(line.contains(facetsSection))
+					isInFacetsSection = true;
+				else if(line.contains(endSection))
+					isInFacetsSection = false;
+				else if(isInFacetsSection)
+					results += line + "\n";
+
+			}
+			br.close();
 		}catch(Exception e){
-		  System.out.println(e.toString());
+			System.out.println(e.toString());
 		}
-		
+
 		return results;
 
 	}
@@ -708,20 +699,19 @@ public abstract class AbstractFormulation {
 	 */
 	public void getFacets(String outputFile) throws UnknownVariableName, InvalidIEQFileFormatException, IOException{
 
-			System.out.println("=== Generate the formulation (output: " + sTmpIEQFile + ")");
-			generateFormulation(sTmpIEQFile);
+		System.out.println("=== Generate the formulation (output: " + sTmpIEQFile + ")");
+		generateFormulation(sTmpIEQFile);
 
-			System.out.println("=== Extract the integer points (input: " + sTmpIEQFile + ", output: " + sTmpPOIFile + ")");
-			vint(sTmpIEQFile);
-			
-			String outputTrafFile = sTmpPOIFile.replace(".poi", ".poi.ieq");
+		System.out.println("=== Extract the integer points (input: " + sTmpIEQFile + ", output: " + sTmpPOIFile + ")");
+		vint(sTmpIEQFile);
 
-			System.out.println("=== Get the facets (input: " + sTmpPOIFile + ", output: " + outputTrafFile + ")");
-			traf(sTmpPOIFile);
+		String outputTrafFile = sTmpPOIFile.replace(".poi", ".poi.ieq");
 
-			System.out.println("=== Convert facets (input: " + outputTrafFile + ", output: " + outputFile + ")");
-			convertIEQFile(outputTrafFile, outputFile, true);
+		System.out.println("=== Get the facets (input: " + sTmpPOIFile + ", output: " + outputTrafFile + ")");
+		traf(sTmpPOIFile);
 
+		System.out.println("=== Convert facets (input: " + outputTrafFile + ", output: " + outputFile + ")");
+		convertIEQFile(outputTrafFile, outputFile, true);
 
 	}
 
@@ -739,14 +729,14 @@ public abstract class AbstractFormulation {
 	 * @return The porta output which includes the dimension and the including hyperplanes
 	 */
 	protected static String dim(String inputFile){
-		
+
 		String result = Command.execute("dim " + inputFile);
 
 		String[] sResult = result.split("DIMENSION OF THE POLYHEDRON");
-		
+
 		if(sResult.length > 1)
 			result = "DIMENSION OF THE INTEGER POLYHEDRON" + sResult[1];
-		
+
 		return result;
 	}
 
@@ -757,26 +747,26 @@ public abstract class AbstractFormulation {
 	 */
 	private static void vint(String inputFile) throws InvalidIEQFileFormatException{
 		String result = Command.execute("vint " + inputFile);
-		
+
 		String[] sResult = result.split("number of valid integral points");
-		
+
 		if(sResult.length > 1)
 			System.out.println("number of valid integral points" + sResult[1].split("\n")[0].trim());
 
 		String error = null;
 		if(result.contains("invalid format"))
 			error = "invalid format";
-			
+
 		else if(result.contains("line too long"))
 			error = "line too long";
-			
+
 		if(error != null) {
 			String[] sInvalid = result.split(error);
-			
+
 			/* Get the first part of the message */
 			String[] lines = sInvalid[0].split("\n");
 			throw new InvalidIEQFileFormatException(lines[lines.length-1] + error + sInvalid[1].split("\n")[0]);
-			
+
 		}
 	}
 

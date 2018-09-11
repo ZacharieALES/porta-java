@@ -135,10 +135,10 @@ public class PCenterPCRad extends AbstractFormulation {
 		Iterator<Double> it = D.iterator();
 		it.next();
 
-		addVariable(new Variable("kStar", 0, K()));
+		registerVariable(new Variable("kStar", 0, K()));
 
 		for(int i = 1 ; i <= M ; i++)
-			addVariable(new Variable("y" + i, 0, 1));
+			registerVariable(new Variable("y" + i, 0, 1));
 
 	}
 

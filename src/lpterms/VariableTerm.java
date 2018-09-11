@@ -14,9 +14,8 @@ public class VariableTerm extends AbstractTerm{
 		originalExpression = expression;
 		
 		/* Define the variable if is not already */
-		if(!reader.isDefined(expression)) {
-			reader.addVariable(new Variable(expression));
-//			System.out.println("Create a new variable \"" + expression + "\"");
+		if(!reader.isRegistered(expression)) {
+			reader.registerVariable(new Variable(expression));
 		}
 		
 		try {
