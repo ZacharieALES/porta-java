@@ -13,25 +13,26 @@ For a given polytope P, this project currently enables to:
 ..* find the facets of P.
 
 ## Prerequisites
-It currently does not work on windows (contributions on that part or another are welcome).
-Porta commands must be in the path.
+..* It currently does not work on windows (contributions on that part or another are welcome).
+..* Porta commands must be in the path.
 
  ## How to use it
  Currently the only way to define an integer polytope is by providing a linear formulation.
  
  ### Formulation definition
  
- #### LP file
+ #### Defining a formulation from an LP file
 The easiest way to define a formulation is to use a [CPLEX lp file](http://lpsolve.sourceforge.net/5.1/CPLEX-format.htm) using the LPReader class :
 
 	LPReader formulation = new LPReader("myformulation.lp");
 
-#### Java class
+#### Defining a formulation by extending the class AbstractFormulationGenerator
 A more flexible way to define formulations is to create a class which extends AbstractFormulationGenerator. In that case, you need to implement two abstract methods :
 
 1. AbstractFormulationGenerator.createVariables(): this method is used to register all the variables used in the formulation thanks to the method AbstractFormulationGenerator.addVariable().
 
-	/* Example of createVariables() method implementation for the knapsack problem 
+        ```
+        /* Example of createVariables() method implementation for the knapsack problem 
 	 * (https://en.wikipedia.org/wiki/Knapsack_problem#Definition)
 	 */
 	protected void createVariables() {
@@ -41,11 +42,13 @@ A more flexible way to define formulations is to create a class which extends Ab
 	    /* Add the variable "xi" which takes values between 0 and 1 */
 	    this.addVariable(new Variable("x" + i, 0, 1));
 	}
+	```
 
 
 2. String getInequalities(): this method is used to create a string which contains all the formulation inequalities thanks to the method AbstractFormulationGenerator.getInequalities().
 
-	/* Example of getInequalities() method implementation for the knapsack problem
+        ```
+        /* Example of getInequalities() method implementation for the knapsack problem
 	 * (https://en.wikipedia.org/wiki/Knapsack_problem#Definition)
 	 */
 	public String getInequalities() throws UnknownVariableName {
@@ -66,6 +69,7 @@ A more flexible way to define formulations is to create a class which extends Ab
 			
 	  return constraint;
 	}
+	```
   
   ### The knapsack example
   The class Knapsack in the package "example" is a good entry point to see how to use the software.
