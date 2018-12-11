@@ -390,9 +390,6 @@ public abstract class AbstractPolytope {
 					bw.write("\n");
 
 				}
-//				else{
-//					System.out.println("The lines seems to contain an integer solution but it contains " + (sTemp.length-1) + " integer values instead of " + variables.size()+ "\nThe line: " + line);
-//				}
 				bw.flush();
 
 			}
@@ -434,7 +431,6 @@ public abstract class AbstractPolytope {
 				+ "Porta name\tOriginal name\n---\n";
 
 		for(int i = 0; i < variables.size(); i++) {
-			//			System.out.println(variables.get(i) == null);
 
 			if(variables.get(i) != null)
 				result += "x" + i + "\t\t" + variables.get(i).originalName + "\n";

@@ -210,5 +210,4 @@ public abstract class AbstractIntegerPoints extends AbstractPolytope{
 		convertIEQFile(outputTrafFile, outputFile, true);
 
 	}
-
 }

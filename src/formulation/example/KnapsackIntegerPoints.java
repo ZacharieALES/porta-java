@@ -93,8 +93,6 @@ public class KnapsackIntegerPoints extends AbstractIntegerPoints{
 					point.setVariable("x" + objectId, 1);
 
 				addIntegerPoint(point);
-				
-				System.out.println(point);
 
 				/* Find other solutions in which the object nextObject is included */
 				findFeasibleSolutions(remainingSpace-w[nextObject-1], nextObject-1, objectsInTheKnapsack);

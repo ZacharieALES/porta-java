@@ -42,7 +42,6 @@ public abstract class AbstractFormulation extends AbstractPolytope{
 	 * @throws UnknownVariableName
 	 */
 	public void generateFormulation() throws UnknownVariableName{
-		//		System.out.println("Generate formulation in : "+ sTmpIEQFile);
 		generateFormulation(sTmpIEQFile);
 	}
 
