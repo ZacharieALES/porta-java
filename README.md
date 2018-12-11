@@ -37,9 +37,9 @@ The easiest way to provide a formulation is to import a [CPLEX lp file](http://l
 
 	LPReader formulation = new LPReader("myformulation.lp");
 
-&nbsp;&nbsp;Drawback: it may not be convenient to generate an lp file for each instance you want to study. In that case you can use an *AbstractFormulation* that will directly read your input files.
+&nbsp;&nbsp;Drawback: it may not be convenient to generate an lp file for each instance you want to study. In that case you can use an *AbstractFormulation* that will directly read your input files (or in which your instances are hard coded).
  
-##### 2/2 - Defining a formulation by extending the class AbstractFormulation
+##### 2/2 - Providing a formulation by extending the class AbstractFormulation
 To extend AbstractFormulation, you need to implement two abstract methods :
 
 1. *createVariables()*: register all the variables used in your formulation.
