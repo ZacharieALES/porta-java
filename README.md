@@ -1,6 +1,3 @@
-# porta-java
-
-## Introduction
 The software [porta](http://porta.zib.de/) is used to analyze polytopes and polyhedra. One of its drawback is that the variables in the formulation used to define the polytopes must be named x1, x2, x3, ... This is not user-friendly when you consider a formulation which contains different variables names with potentially several indices. It makes it difficult to:
 * write your formulation so that porta understands it;
 * understand the outputs returned by porta.
@@ -14,13 +11,13 @@ For a given polytope P, this project currently enables to:
 
 In the context of this project, a polytope corresponds to the convex hull of a set of integer points.
 
-## How to use porta-java?
+# How to use porta-java?
 
-### Prerequisites
+## Prerequisites
 * It currently does not work on windows (contributions on that part or another are welcome).
 * Porta commands must be in your path.
  
-### How to define a polytope? 
+## How to define a polytope? 
 1. Provide a linear formulation: the polytope will correspond to the convex hull of its feasible integer solutions.
 
 &nbsp;&nbsp;Advantage: usually easier to write;
@@ -29,17 +26,17 @@ In the context of this project, a polytope corresponds to the convex hull of a s
 
 &nbsp;&nbsp;Advantage: usually quicker (it may be long for porta to find the integer points associated to a formulation).
   
-#### How define a polytope by providing a linear formulation?
+### How define a polytope by providing a linear formulation?
 There are two ways of providing a linear formulation
  
-##### 1/2 - Providing a formulation from an LP file
+#### 1/2 - Providing a formulation from an LP file
 The easiest way to provide a formulation is to import a [CPLEX lp file](http://lpsolve.sourceforge.net/5.1/CPLEX-format.htm) using the LPReader class :
 
 	LPReader formulation = new LPReader("myformulation.lp");
 
 &nbsp;&nbsp;Drawback: it may not be convenient to generate an lp file for each instance you want to study. In that case you can use an *AbstractFormulation* that will directly read your input files (or in which your instances are hard coded).
  
-##### 2/2 - Providing a formulation by extending the class AbstractFormulation
+#### 2/2 - Providing a formulation by extending the class AbstractFormulation
 To extend AbstractFormulation, you need to implement two abstract methods :
 
 1. *createVariables()*: register all the variables used in your formulation.
@@ -84,7 +81,7 @@ To extend AbstractFormulation, you need to implement two abstract methods :
     }
     ```
   
-#### How to define a polytope by providing integer points?
+### How to define a polytope by providing integer points?
 
 To define a polytope by providing integer points, create a class which extends AbstractIntegerPoints and implements two abstract methods:
 
@@ -112,29 +109,29 @@ To define a polytope by providing integer points, create a class which extends A
 		 */
 	}
 	```
-### How to analyze a polytope once it is defined?
+## How to analyze a polytope once it is defined?
    
-#### Get its integer points
+### Get its integer points
   
     System.out.println(polytope.getIntegerPoints());
       
-#### Get its dimension
+### Get its dimension
   
     System.out.println(polytope.getDimension());
       
-#### Get its facets 
+### Get its facets 
   
     System.out.println(polytope.getFacets());
       
-### The knapsack example
+## The knapsack example
   The classes *KnapsackFormulation* and *KnapsackIntegerPoints* from the package "example" are good entry points to see how to use the software on the [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem#Definition).
   
-## Feedbacks are welcome
+# Feedbacks are welcome
 We are in the early stage of this project so bugs and limitations should be expected. 
 
 I would be most grateful if you could report to me any problem, comment or suggestion that you might have (through the github issue system or directly by mail zacharie.ales[at]ensta[dot]fr).
   
-## Considered new features
+# Considered new features
 * Better handling of the .lp format (in particular keywords "free" and "infinity" are  not currently taken into account);
 * Manage more porta features and options;
 * Get the results in latex;
