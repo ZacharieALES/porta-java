@@ -26,7 +26,7 @@ In the context of this project, a polytope corresponds to the convex hull of a s
 
 &nbsp;&nbsp;Advantage: usually quicker (it may be long for porta to find the integer points associated to a formulation).
   
-### How define a polytope by providing a linear formulation?
+### How to define a polytope by providing a linear formulation?
 There are two ways of providing a linear formulation
  
 #### 1/2 - Providing a formulation from an LP file
@@ -124,12 +124,12 @@ To define a polytope by providing integer points, create a class which extends A
     System.out.println(polytope.getFacets());
       
 ## The knapsack example
-  The classes *KnapsackFormulation* and *KnapsackIntegerPoints* from the package "example" are good entry points to see how to use the software on the [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem#Definition).
+  The classes *KnapsackFormulation* and *KnapsackIntegerPoints* from the package "example" are good entry points to see how to use the software.
   
 # Feedbacks are welcome
 We are in the early stage of this project so bugs and limitations should be expected. 
 
-I would be most grateful if you could report to me any problem, comment or suggestion that you might have (through the github issue system or directly by mail zacharie.ales[at]ensta[dot]fr).
+I would be most grateful if you could report to me any problem, comment or suggestion that you might have (through the github issue system or directly by email at zacharie.ales[at]ensta[dot]fr).
   
 # Considered new features
 * Better handling of the .lp format (in particular keywords "free" and "infinity" are  not currently taken into account);
