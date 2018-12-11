@@ -23,10 +23,11 @@ In the context of this project, a polytope corresponds to the convex hull of a s
 ### How to define a polytope? 
 1. Provide a linear formulation: the polytope will correspond to the convex hull of its feasible integer solutions.
 
-&nbsp;&nbsp;**Advantage**: usually easier to write;
+&nbsp;&nbsp;Advantage: usually easier to write;
+
 2. Provide a set of integer points: the polytope will directly correspond to their convex hull.
 
-&nbsp;&nbsp;**Advantage**: usually quicker (it may be long for porta to find the integer points associated to a formulation).
+&nbsp;&nbsp;Advantage: usually quicker (it may be long for porta to find the integer points associated to a formulation).
   
 #### How define a polytope by providing a linear formulation?
 There are two ways of providing a linear formulation
@@ -36,7 +37,7 @@ The easiest way to provide a formulation is to import a [CPLEX lp file](http://l
 
 	LPReader formulation = new LPReader("myformulation.lp");
 
-&nbsp;&nbsp;**Drawback**: it may not be convenient to generate an lp file for each instance you want to study. In that case you can use an *AbstractFormulation* that will directly read your input files.
+&nbsp;&nbsp;Drawback: it may not be convenient to generate an lp file for each instance you want to study. In that case you can use an *AbstractFormulation* that will directly read your input files.
  
 ##### 2/2 - Defining a formulation by extending the class AbstractFormulation
 To extend AbstractFormulation, you need to implement two abstract methods :
