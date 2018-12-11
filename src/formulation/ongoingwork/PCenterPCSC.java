@@ -222,7 +222,7 @@ public class PCenterPCSC extends AbstractFormulation {
 			
 			PCenterPCSC formulation = new PCenterPCSC("./data/" + inputFile + ".dat");
 
-			formulation.getFacets(folderPath + prefix + "facets.ieq");
+			formulation.extractFacets(folderPath + prefix + "facets.ieq");
 
 			System.out.println(formulation.getDimension());
 

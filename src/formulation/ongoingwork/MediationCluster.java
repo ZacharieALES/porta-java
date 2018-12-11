@@ -243,7 +243,7 @@ public class MediationCluster extends AbstractFormulation{
 
 			MediationCluster formulation = new MediationCluster("./data/" + inputFile + ".txt", alpha, alpha);
 
-			formulation.getFacets(folderPath + "_facets_" + prefix + ".ieq");
+			formulation.extractFacets(folderPath + "_facets_" + prefix + ".ieq");
 
 			formulation.convertPOIFile("./.tmp/tmp.poi", folderPath + "_integer_points_" + prefix + ".poi");
 			formulation.convertIEQFile("./.tmp/tmp.ieq", folderPath + "_formulation_" + prefix + ".ieq", false);

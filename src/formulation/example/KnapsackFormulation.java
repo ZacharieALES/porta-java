@@ -12,7 +12,13 @@ import formulation.AbstractFormulation;
 import formulation.LPReader;
 import formulation.Variable;
 
-public class Knapsack extends AbstractFormulation{
+/**
+ * Definition of the polytope associated to a knapsack problem thanks to its integer linear problem formulation.
+ *  
+ * @author zach
+ *
+ */
+public class KnapsackFormulation extends AbstractFormulation{
 
 	/** Number of items **/
 	int n;
@@ -25,9 +31,57 @@ public class Knapsack extends AbstractFormulation{
 	
 	/** Maximal weight of the knapsack */
 	int K;
+
+	/**
+	 * Create a Knapsack object (direct attributes affectation)
+	 * @param n
+	 * @param w
+	 * @param p
+	 * @throws UnknownCommandException 
+	 * @throws InterruptedException 
+	 * @throws IOException 
+	 */
+	public KnapsackFormulation(int n, int K, int[] w, int[] p) throws UnknownCommandException, IOException, InterruptedException {
+		
+		super();
+		this.n = n;
+		this.K = K;
+		this.w = w;
+		this.p = p;
+	}
+	
+	@Override
+	protected void createVariables() {
+		
+		/* Register the knapsack formulation variables */
+		for(int i = 1; i <= n; ++i)
+			this.registerVariable(new Variable("x" + i, 0, 1));
+	}
+
+	@Override
+	public String getConstraints() throws UnknownVariableName {
+		
+		/* Create the constraint 
+		 * 
+		 * Remarks: 
+		 * - the weight of item i is stored in position i-1 of array w[];
+		 * - do not use '*' to multiply a variable and its coefficient;
+		 * - the constraints must be separated by '\n' (here there is only one constraint) */
+		String constraint = w[1 - 1] + " " + portaName("x" + 1);
+		
+		/* For each item */
+		for(int i = 2; i <= n; ++i)
+			constraint += " + " + w[i - 1] + " " + portaName("x" + i);
+		
+		/* Add the right-hand side */
+		constraint += " <= " + K;
+			
+		return constraint;
+	}
 	
 	/* Possible uses of this software */
 	public enum Use{
+		
 		/* Get the dimension of the integer polytope of a formulation, also returns the hyperplans which include the polytope */
 		DIMENSION,
 
@@ -43,44 +97,25 @@ public class Knapsack extends AbstractFormulation{
 		try {
 
 			/* A formulation can be defined from an input file */
-			Knapsack formulation = new Knapsack("./data/knapsack.txt");
+			KnapsackFormulation formulationInputFile = new KnapsackFormulation("./data/knapsack.txt");
 
 			/* or from an LP file */
-			LPReader formulation2 = new LPReader("./data/knapsack.lp");
+			LPReader formulationLP = new LPReader("./data/knapsack.lp");
 
 			/* or by directly giving its attributes */
-			Knapsack formulation3 = new Knapsack(6, 12, new int[] {1, 3, 2, 4, 6, 4}, new int[] {1, 5, 3, 5, 2, 3});
+			KnapsackFormulation formulationAttributes = new KnapsackFormulation(6, 12, new int[] {1, 3, 2, 4, 6, 4}, new int[] {1, 5, 3, 5, 2, 3});
 
-			Use whatToDo = Use.DIMENSION;
+			Use whatToDo = Use.FACETS;
 		
 			switch(whatToDo) {
-			case DIMENSION: System.out.println(formulation.getDimension()); break;
-			case FACETS: System.out.println(formulation2.getFacets()); break;
-			case INTEGER_POINTS: System.out.println(formulation3.getIntegerPoints()); break;
+			case DIMENSION: System.out.println(formulationInputFile.getDimension()); break;
+			case FACETS: System.out.println(formulationLP.getFacets()); break;
+			case INTEGER_POINTS: System.out.println(formulationAttributes.getIntegerPoints()); break;
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	}
-
-	/**
-	 * Create a Knapsack object (direct attributes affectation)
-	 * @param n
-	 * @param w
-	 * @param p
-	 * @throws UnknownCommandException 
-	 * @throws InterruptedException 
-	 * @throws IOException 
-	 */
-	public Knapsack(int n, int K, int[] w, int[] p) throws UnknownCommandException, IOException, InterruptedException {
-		
-		super();
-		this.n = n;
-		this.K = K;
-		this.w = w;
-		this.p = p;
 	}
 
 	/**
@@ -99,7 +134,7 @@ public class Knapsack extends AbstractFormulation{
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-	public Knapsack(String inputFile) throws UnknownCommandException, IOException, InterruptedException {
+	public KnapsackFormulation(String inputFile) throws UnknownCommandException, IOException, InterruptedException {
 
 		super();
 		
@@ -223,37 +258,6 @@ public class Knapsack extends AbstractFormulation{
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-
-	}
-
-	@Override
-	protected void createVariables() {
-		
-		/* Register the knapsack formulation variables */
-		for(int i = 1; i <= n; ++i)
-			this.registerVariable(new Variable("x" + i, 0, 1));
-	}
-
-	@Override
-	public String getConstraints() throws UnknownVariableName {
-		
-		/* Create the constraint 
-		 * 
-		 * Remarks: 
-		 * - the weight of item i is stored in position i-1 of array w[];
-		 * - do not use '*' to multiply a variable and its coefficient;
-		 * - the constraints must be separated by \n (here there is only one constraint) */
-		String constraint = w[1 - 1] + " " + portaName("x" + 1);
-		
-		/* For each item */
-		for(int i = 2; i <= n; ++i)
-			constraint += " + " + w[i - 1] + " " + portaName("x" + i);
-		
-		/* Add the right-hand side */
-		constraint += " <= " + K;
-			
-		return constraint;
 	}
 	
 	@SuppressWarnings("serial")

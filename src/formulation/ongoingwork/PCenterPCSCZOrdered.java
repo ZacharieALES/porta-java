@@ -107,7 +107,7 @@ public class PCenterPCSCZOrdered extends PCenterPCSC{
 			//
 			System.out.println(formulation.getDimension());
 			
-			formulation.getFacets("./.tmp/facet.ieq");
+			formulation.extractFacets("./.tmp/facet.ieq");
 			
 			//			Porta.getFacets(formulation, "./.tmp/" + inputFile + "_ordered_facets.ieq");
 

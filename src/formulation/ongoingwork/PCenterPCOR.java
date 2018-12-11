@@ -49,7 +49,7 @@ public class PCenterPCOR extends PCenterPCSCZOrdered{
 			//
 			System.out.println(formulation.getDimension());
 			
-			formulation.getFacets("./.tmp/facet.ieq");
+			formulation.extractFacets("./.tmp/facet.ieq");
 			
 			//			Porta.getFacets(formulation, "./.tmp/" + inputFile + "_ordered_facets.ieq");
 
