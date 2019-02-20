@@ -81,9 +81,9 @@ public class TestLPTrain extends LPReader{
 				inputFile = "./data/sncf3.lp";
 				formulation = new TestLPTrain(inputFile);
 
-				System.out.println(formulation.getDimension());
+				System.out.println(formulation.getIPDimension());
 
-				formulation.extractFacets("./.tmp/facet.ieq");
+				formulation.writeFacetsInFile("./.tmp/facet.ieq");
 
 				formulation.convertPOIFile("./.tmp/tmp.poi", "./.tmp/" + inputFile + "_ordered_converted_integer_points.poi");
 				formulation.convertIEQFile("./.tmp/tmp.ieq", "./.tmsncf1.lpp/" + inputFile + "_ordered_converted_formulation.ieq", false);

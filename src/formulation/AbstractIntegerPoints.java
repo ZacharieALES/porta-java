@@ -1,13 +1,9 @@
 package formulation;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,31 +35,6 @@ public abstract class AbstractIntegerPoints extends AbstractPolytope{
 	 * @throws UnknownVariableName 
 	 */
 	public abstract void createIntegerPoints() throws UnknownVariableName;
-	
-	public String getIntegerPoints() throws UnknownVariableName, IOException {
-
-		String results = "";
-
-		writeIntegerPointsInFile(sTmpPOIFile);
-		convertPOIFile(sTmpPOIFile, sTmpConvertedPOIFile);
-		
-		try{
-			InputStream ips=new FileInputStream(sTmpConvertedPOIFile);
-			InputStreamReader ipsr=new InputStreamReader(ips);
-			BufferedReader br=new BufferedReader(ipsr);
-			String line;
-
-			while ((line=br.readLine())!=null)
-					results += line + "\n";
-
-			br.close();
-		}catch(Exception e){
-			System.out.println(e.toString());
-		}
-
-		return results;
-
-	}
 	
 	/**
 	 * Generate the integer points file in the default location
@@ -121,93 +92,23 @@ public abstract class AbstractIntegerPoints extends AbstractPolytope{
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Use porta to get the dimension and the hyperplanes which include the convex hull of the integer points from a given formulation
-	 * @param generator The generator associated to the considered formulation
-	 * @return The dimension and the hyperplanes which include porta; null if an error occurred
-	 * @throws UnknownVariableName 
-	 * @throws InvalidIEQFileFormatException 
-	 */
-	public String getDimension() throws UnknownVariableName, InvalidIEQFileFormatException{
-
-		String output = null;
-
-		System.out.println("=== Generate the integer points");
-		writeIntegerPointsInDefaultFile();
-
-		System.out.println("=== Get the dimension");
-		System.out.println("INITIAL DIMENSION : " + variables.size());
-		output = dim(this.sTmpPOIFile);
-
-		output = replacePortaVariablesInString(output);
-
-		return output;
-
-	}
-
-
-
-	/**
-	 * Extract the facets associated to this formulation.
-	 * @return
-	 * @throws UnknownVariableName
-	 * @throws InvalidIEQFileFormatException
-	 * @throws IOException
-	 */
-	public String getFacets() throws UnknownVariableName, InvalidIEQFileFormatException, IOException{
-
-		String results = "";
-
-		writeFacetsInFile(sTmpConvertedFacetsFile);
-		try{
-			InputStream ips=new FileInputStream(sTmpConvertedFacetsFile);
-			InputStreamReader ipsr=new InputStreamReader(ips);
-			BufferedReader br=new BufferedReader(ipsr);
-			String line;
-			String facetsSection = "INEQUALITIES_SECTION";
-			String endSection = "END";
-			boolean isInFacetsSection = false;
-
-			while ((line=br.readLine())!=null){
-
-				if(line.contains(facetsSection))
-					isInFacetsSection = true;
-				else if(line.contains(endSection))
-					isInFacetsSection = false;
-				else if(isInFacetsSection)
-					results += line + "\n";
-
-			}
-			br.close();
-		}catch(Exception e){
-			System.out.println(e.toString());
-		}
-
-		return results;
-
-	}
-
-	/**
-	 * Use porta to get the facets of the integer polytope associated to this formulation and write them in a file
-	 * @param generator The generator associated to the considered formulation
-	 * @param outputFile The file in which the facets will be added; null if an error occurred
-	 * @throws UnknownVariableName 
-	 * @throws InvalidIEQFileFormatException 
-	 * @throws IOException  
-	 */
-	public void writeFacetsInFile(String outputFile) throws UnknownVariableName, InvalidIEQFileFormatException, IOException{
+	
+	public void generateIntegerPoints() throws UnknownVariableName {
 
 		System.out.println("=== Generate the integer points (output: " + sTmpPOIFile + ")");
 		writeIntegerPointsInDefaultFile();
+			
+	}
 	
-		String outputTrafFile = sTmpPOIFile.replace(".poi", ".poi.ieq");
+	/**
+	 * Generate the formulation in the default file
+	 * @throws UnknownVariableName
+	 * @throws InvalidIEQFileFormatException 
+	 */
+	@Override
+	public String generateFormulation() throws UnknownVariableName, InvalidIEQFileFormatException{
 
-		System.out.println("=== Get the facets (input: " + sTmpPOIFile + ", output: " + outputTrafFile + ")");
-		traf(sTmpPOIFile);
-
-		System.out.println("=== Convert facets (input: " + outputTrafFile + ", output: " + outputFile + ")");
-		convertIEQFile(outputTrafFile, outputFile, true);
-
+		/* When considering integer points, P = I(P) */
+		return generateIPFormulation();
 	}
 }

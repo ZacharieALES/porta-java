@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ import exception.InvalidIEQFileFormatException;
 import exception.UnknownCommandException;
 import exception.UnknownVariableName;
 import utils.Command;
+import utils.Utility;
 
 /**
  * Corresponds to the representation of a polytope.
@@ -38,6 +41,11 @@ public abstract class AbstractPolytope {
 	public String sTmpPOIFile = sTmpFolder + "/" + sTmpFileCanonicName + ".poi";
 	public String sTmpConvertedPOIFile = sTmpPOIFile + "_converted";
 	public String sTmpConvertedFacetsFile = sTmpFolder + "/" + sTmpFileCanonicName + ".poi.ieq_converted";
+	public String sTmpConvertedIntegerPointsFile =  sTmpPOIFile + "_converted";
+	public String sTmpIEQFile = sTmpFolder + "/" + sTmpFileCanonicName + ".ieq";
+	
+	NumberFormat nf = new DecimalFormat("#0.00");
+
 	
 	public AbstractPolytope() throws UnknownCommandException, IOException, InterruptedException {
 		Command.checkCommand("traf");
@@ -56,9 +64,23 @@ public abstract class AbstractPolytope {
 	/** Fill the <variables> hashmap. The key of each entry is its index in porta, the value coresponds to the name of the variable */
 	protected abstract void createVariables();
 
+	/**
+	 * Generate the integer points contained in the polytope. The result must be written in sTmpPOIFile
+	 * @throws UnknownVariableName
+	 * @throws InvalidIEQFileFormatException
+	 */
+	public abstract void generateIntegerPoints() throws UnknownVariableName, InvalidIEQFileFormatException;
 
 	/**
-	 * Convert an ieq file in which the variable have porta names into a file in which the variable have the user name
+	 * Generate P formulation. The result must be written in sTmpPOIFile
+	 * @return 
+	 * @throws UnknownVariableName
+	 * @throws InvalidIEQFileFormatException
+	 */
+	public abstract String generateFormulation() throws UnknownVariableName, InvalidIEQFileFormatException;
+
+	/**
+	 * Convert an ieq file in which the variables have porta names into a file in which the variable have the user name
 	 * @param inputIEQFile The path of the input ieq file
 	 * @param convertedIEQFile The path of the output file
 	 * @param removeMinuses True if the variables which appear with a minus '-' in a constraint are put on the other side of the equation (useful to ease the reading of porta output file, less useful when applied on user generated files as it may present the constraints in a way the user is not used to)
@@ -105,7 +127,7 @@ public abstract class AbstractPolytope {
 	
 
 	/**
-	 * To ease the readibility of the constraints, change the side of the terms of the constraints which have a negative coefficient 
+	 * To ease the readibility of the constraints, change the side of the constraint terms which have a negative coefficient 
 	 * @param s String which contains the constraint
 	 * @return
 	 */
@@ -335,38 +357,76 @@ public abstract class AbstractPolytope {
 
 		String line;
 
-		int solutionNb = 1;
-		
 
 		String convSection = "CONV_SECTION";
+		String coneSection = "CONE_SECTION";
 		String endSection = "END";
 		boolean isInConvSection = false;
-
+		boolean isInConeSection = false;
+		
+		/* Type of the object read (vector or point) */
+		String objectType ="";
+		int objectNb = 0;
+		
 		while ((line=br.readLine())!=null){
 
 			line = line.trim();
 			
-			if(line.contains(convSection))
+			if(line.contains(convSection)) {
 				isInConvSection = true;
-			else if(line.contains(endSection))
+				isInConeSection = false;
+				objectType = "Point";
+				objectNb = 1;
+			}
+			if(line.contains(coneSection)) {
+				isInConeSection = true;
 				isInConvSection = false;
-			else if(isInConvSection) {
+				objectType = "Vector";
+				objectNb = 1;
+			}
+			else if(line.contains(endSection)) {
+				isInConvSection = false;
+				isInConeSection = false;
+			}
+			else if(isInConvSection || isInConeSection) {
 
 				String []sTemp = line.split("\\)");
 
-				/* If the line starts by something like "(points n°1)" */
+				String point = "";
+
+				/* If the line contains ')' (e.g., if it starts by "( 1)") */
 				if(sTemp.length > 1)
-					sTemp = sTemp[1].trim().split(" ");
+					point = sTemp[1];
 				else
-					sTemp = sTemp[0].trim().split(" ");
+					point = sTemp[0];
+				
+				point = point.trim().replace("- ", "-");
+				int pSize;
+				
+				do {
+					pSize = point.length();
+					point = point.replace("  ", " ");
+					
+				}while(pSize != point.length());
+				
+				sTemp = point.split(" ");
 
 				/* If the line corresponds to a point */
 				if(sTemp.length == variables.size()){
 
-					HashMap<Integer, List<String>> variablesByValue = new HashMap<>();
+					/* Map which contains for each value in the solution, the name of the variables with this value */
+					HashMap<Double, List<String>> variablesByValue = new HashMap<>();
 
 					for(int i = 0 ; i < variables.size() ; i++){
-						Integer value = Integer.parseInt(sTemp[i]);
+						
+						Double value;
+						
+						if(sTemp[i].contains("/")) {
+							String[] sTemp2 = sTemp[i].split("/");
+							value = Double.parseDouble(sTemp2[0]) / Double.parseDouble(sTemp2[1]);
+						}
+						else
+							value = Double.parseDouble(sTemp[i]);
 
 						List<String> list = variablesByValue.get(value);
 
@@ -380,12 +440,15 @@ public abstract class AbstractPolytope {
 
 					}
 
-					bw.write("Solution n°" + solutionNb + "\n");
-					solutionNb++;
+					bw.write(objectType  +" n°" + objectNb + "\n");
+					objectNb++;
 
-					for(Entry<Integer, List<String>> entry: variablesByValue.entrySet()){
+					for(Entry<Double, List<String>> entry: variablesByValue.entrySet()){
 						if(entry.getKey() != 0 || variablesByValue.entrySet().size() == 1)
-							bw.write("= " + entry.getKey() + ": " + entry.getValue() + "\n");
+							if(Utility.isInteger(entry.getKey()))
+								bw.write(entry.getValue() + " = " + entry.getKey().intValue() + "\n");
+							else
+								bw.write(entry.getValue() + " = " + nf.format(entry.getKey()) + "\n");
 					}
 					bw.write("\n");
 
@@ -483,11 +546,201 @@ public abstract class AbstractPolytope {
 	public static void traf(String inputFile){
 		Command.execute("traf " + inputFile);
 	}
+	
+	/**
+	 * Use porta to get the facets of the integer polytope associated to this formulation and write them in a file
+	 * @param generator The generator associated to the considered formulation
+	 * @param outputFile The file in which the facets will be added; null if an error occurred
+	 * @throws UnknownVariableName 
+	 * @throws InvalidIEQFileFormatException 
+	 * @throws IOException  
+	 */
+	public void writeFacetsInFile(String outputFile) throws UnknownVariableName, InvalidIEQFileFormatException, IOException{
 
-	public abstract String getDimension() throws UnknownVariableName, InvalidIEQFileFormatException;
-	public abstract String getFacets() throws UnknownVariableName, InvalidIEQFileFormatException, IOException;
-	public abstract String getIntegerPoints() throws UnknownVariableName, InvalidIEQFileFormatException, IOException;
+		generateIntegerPoints();
+	
+		String outputTrafFile = sTmpPOIFile.replace(".poi", ".poi.ieq");
+
+		System.out.println("=== Get the facets (input: " + sTmpPOIFile + ", output: " + outputTrafFile + ")");
+		traf(sTmpPOIFile);
+
+		System.out.println("=== Convert facets (input: " + outputTrafFile + ", output: " + outputFile + ")");
+		convertIEQFile(outputTrafFile, outputFile, true);
+
+	}
+	
+	/**
+	 * Extract the facets associated to this formulation.
+	 * @return
+	 * @throws UnknownVariableName
+	 * @throws InvalidIEQFileFormatException
+	 * @throws IOException
+	 */
+	public String getIPFacets() throws UnknownVariableName, InvalidIEQFileFormatException, IOException{
+
+		String results = "";
+
+		writeFacetsInFile(sTmpConvertedFacetsFile);
+		try{
+			InputStream ips=new FileInputStream(sTmpConvertedFacetsFile);
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String line;
+			String facetsSection = "INEQUALITIES_SECTION";
+			String endSection = "END";
+			boolean isInFacetsSection = false;
+
+			while ((line=br.readLine())!=null){
+
+				if(line.contains(facetsSection))
+					isInFacetsSection = true;
+				else if(line.contains(endSection))
+					isInFacetsSection = false;
+				else if(isInFacetsSection)
+					results += line + "\n";
+
+			}
+			br.close();
+		}catch(Exception e){
+			System.out.println(e.toString());
+		}
+
+		return results;
+
+	}
+
+	/**
+	 * Use porta to get the dimension and the hyperplanes which include the convex hull of the integer points of the polytope
+	 * @return The dimension and the hyperplanes which include porta; null if an error occurred
+	 * @throws UnknownVariableName 
+	 * @throws InvalidIEQFileFormatException 
+	 */
+	public String getIPDimension() throws UnknownVariableName, InvalidIEQFileFormatException{
+
+		String output = null;
+
+		generateIntegerPoints();
+		
+		System.out.println("=== Get the dimension");
+		System.out.println("INITIAL DIMENSION : " + variables.size());
+		output = dim(this.sTmpPOIFile);
+
+		output = replacePortaVariablesInString(output);
+
+		return output;
+
+	}
+	
+
+	public String getIntegerPoints() throws UnknownVariableName, InvalidIEQFileFormatException, IOException {
+
+		String results = "";
+
+		generateIntegerPoints();
+
+		convertPOIFile(sTmpPOIFile, sTmpConvertedIntegerPointsFile);
+
+		try{
+			InputStream ips=new FileInputStream(sTmpConvertedIntegerPointsFile);
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String line;
+
+			while ((line=br.readLine())!=null)
+				results += line + "\n";
+
+			br.close();
+		}catch(Exception e){
+			System.out.println(e.toString());
+		}
+
+		return results;
+	}
+	
+
+	
+
+	/**
+	 * Use porta to get the extreme points of a polytope associated to this formulation and write them in a file
+	 * @param outputFile The file in which the facets will be added; null if an error occurred
+	 * @param isIntegerPoltyope True if we consider the integer polytope; false if we consider the relaxation polytope
+	 * @throws UnknownVariableName 
+	 * @throws InvalidIEQFileFormatException 
+	 * @throws IOException 
+	 */
+	public void writeExtremePointsInFile(String outputFile, boolean isIntegerPolytope) throws UnknownVariableName, InvalidIEQFileFormatException, IOException{
+
+		String formulationFile;
+		
+		if(isIntegerPolytope)
+			formulationFile = generateIPFormulation();
+		else
+			formulationFile = generateFormulation();
+			
+		String lastTrafOutputFile = formulationFile + ".poi";
+		System.out.println("=== Get the extreme points (input: " + formulationFile + ", output: " + lastTrafOutputFile + ")");
+		traf(formulationFile);
+
+		System.out.println("=== Convert extreme points (input: " + lastTrafOutputFile + ", output: " + outputFile + ")");
+		convertPOIFile(lastTrafOutputFile, outputFile);
+	}
+	
+	public String getIPExtremePoints() throws UnknownVariableName, InvalidIEQFileFormatException, IOException {
+		return getExtremePoints(true);
+	}
+
+	public String getExtremePoints() throws UnknownVariableName, InvalidIEQFileFormatException, IOException {
+		return getExtremePoints(false);
+	}
 
 
+	/**
+	 * Extract the facets associated to this formulation.
+	 * @return
+	 * @throws UnknownVariableName
+	 * @throws InvalidIEQFileFormatException
+	 * @throws IOException
+	 */
+	public String getExtremePoints(boolean isIntegerPolytope) throws UnknownVariableName, InvalidIEQFileFormatException, IOException {
 
+		String results = "";
+
+		writeExtremePointsInFile(sTmpPOIFile, isIntegerPolytope);
+		
+		try{
+			InputStream ips=new FileInputStream(sTmpPOIFile);
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String line;
+
+			while ((line=br.readLine())!=null)
+					results += line + "\n";
+
+			br.close();
+		}catch(Exception e){
+			System.out.println(e.toString());
+		}
+
+		return results;
+
+	}
+	
+	/**
+	 * Generate I(P) formulation. The result must be written in sTmpPOIFile
+	 * @return Output file in which the formulation has been generated
+	 * @throws UnknownVariableName
+	 * @throws InvalidIEQFileFormatException
+	 */
+	public String generateIPFormulation() throws UnknownVariableName, InvalidIEQFileFormatException{
+
+		generateIntegerPoints();
+
+		String output = sTmpPOIFile + ".ieq";
+		System.out.println("=== Generate the integer polytope (output: " + output + ")");
+		traf(sTmpPOIFile);
+		
+		return output;
+		
+	}
+	
 }

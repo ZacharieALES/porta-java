@@ -89,13 +89,19 @@ public class KnapsackFormulation extends AbstractFormulation{
 		INTEGER_POINTS, 
 
 		/* Get the facets of the problem */
-		FACETS
+		FACETS,
+		
+		/* Get the extrem points of the polytope of the linear relaxation */
+		CONTINUOUS_EXTREME_POINTS,
+		
+		/* Get the extrem points of the polytope of the linear relaxation */
+		INTEGER_EXTREME_POINTS
 	}
 
 	public static void main(String[] args) {
 
 		try {
-
+			
 			/* A formulation can be defined from an input file */
 			KnapsackFormulation formulationInputFile = new KnapsackFormulation("./data/knapsack.txt");
 
@@ -105,12 +111,14 @@ public class KnapsackFormulation extends AbstractFormulation{
 			/* or by directly giving its attributes */
 			KnapsackFormulation formulationAttributes = new KnapsackFormulation(6, 12, new int[] {1, 3, 2, 4, 6, 4}, new int[] {1, 5, 3, 5, 2, 3});
 
-			Use whatToDo = Use.FACETS;
+			Use whatToDo = Use.INTEGER_EXTREME_POINTS;
 		
 			switch(whatToDo) {
-			case DIMENSION: System.out.println(formulationInputFile.getDimension()); break;
-			case FACETS: System.out.println(formulationLP.getFacets()); break;
+			case DIMENSION: System.out.println(formulationInputFile.getIPDimension()); break;
+			case FACETS: System.out.println(formulationLP.getIPFacets()); break;
 			case INTEGER_POINTS: System.out.println(formulationAttributes.getIntegerPoints()); break;
+			case CONTINUOUS_EXTREME_POINTS: System.out.println(formulationInputFile.getExtremePoints());break; 
+			case INTEGER_EXTREME_POINTS: System.out.println(formulationInputFile.getIPExtremePoints());break;
 			}
 			
 		} catch (Exception e) {
@@ -119,7 +127,7 @@ public class KnapsackFormulation extends AbstractFormulation{
 	}
 
 	/**
-	 * Create a Knapsack by reading its attributes values from an input file .
+	 * Create a Knapsack by reading its attributes values p from an input file .
 	 * 
 	 * The file must contains:
 	 * - a line which contains "n = X" with X an integer;

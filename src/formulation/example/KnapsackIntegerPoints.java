@@ -51,6 +51,14 @@ public class KnapsackIntegerPoints extends AbstractIntegerPoints{
 	}
 
 	@Override
+	protected void createVariables() {
+
+		/* Register the knapsack formulation variables */
+		for(int i = 1; i <= n; ++i)
+			this.registerVariable(new Variable("x" + i, 0, 1));
+	}
+
+	@Override
 	public void createIntegerPoints() throws UnknownVariableName {
 
 		/* Add the solution associated to an empty knapsack */
@@ -64,7 +72,7 @@ public class KnapsackIntegerPoints extends AbstractIntegerPoints{
 	/**
 	 * Find all the knapsack feasible integer solutions which:
 	 * - contain the objects in {@code objectsInTheKnapsack}
-	 * - contain objects of id between 0 and {@code nextObject} - 1
+	 * - contain objects of id between 1 and {@code nextObject}
 	 * 
 	 * @param remainingSpace Remaining available space in the knapsack
 	 * @param nextObject Id of the next object that we will want to add in the knapsack (between 1 and n)
@@ -102,15 +110,6 @@ public class KnapsackIntegerPoints extends AbstractIntegerPoints{
 			}	
 		}
 	} 
-
-	@Override
-	protected void createVariables() {
-
-		/* Register the knapsack formulation variables */
-		for(int i = 1; i <= n; ++i)
-			this.registerVariable(new Variable("x" + i, 0, 1));
-	}
-
 	
 	/* Possible uses of this software */
 	public enum Use{
@@ -122,7 +121,13 @@ public class KnapsackIntegerPoints extends AbstractIntegerPoints{
 		INTEGER_POINTS, 
 
 		/* Get the facets of the problem */
-		FACETS
+		FACETS,
+		
+		/* Get the extrem points of the polytope of the linear relaxation */
+		CONTINUOUS_EXTREME_POINTS,
+		
+		/* Get the extrem points of the polytope of the linear relaxation */
+		INTEGER_EXTREME_POINTS
 	}
 
 
@@ -132,12 +137,17 @@ public class KnapsackIntegerPoints extends AbstractIntegerPoints{
 
 			KnapsackIntegerPoints polytope = new KnapsackIntegerPoints(6, 12, new int[] {1, 3, 2, 4, 6, 4}, new int[] {1, 5, 3, 5, 2, 3});
 
-			Use whatToDo = Use.FACETS;
+			Use whatToDo = Use.INTEGER_EXTREME_POINTS;
 		
 			switch(whatToDo) {
-			case DIMENSION: System.out.println(polytope.getDimension()); break;
-			case FACETS: System.out.println(polytope.getFacets()); break;
+			case DIMENSION: System.out.println(polytope.getIPDimension()); break;
+			case FACETS: System.out.println(polytope.getIPFacets()); break;
 			case INTEGER_POINTS: System.out.println(polytope.getIntegerPoints()); break;
+			case CONTINUOUS_EXTREME_POINTS: System.out.println(polytope.getExtremePoints());break;
+
+			
+			/* Remark: extracting integer or continuous extreme points will return the same result as the convex hull of the integer points is directly conidered */
+			case INTEGER_EXTREME_POINTS: System.out.println(polytope.getIPExtremePoints());break;
 			}
 			
 		} catch (Exception e) {

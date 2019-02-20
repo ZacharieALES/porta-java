@@ -129,7 +129,7 @@ public class PCenterPCSCZCompletelyOrdered extends PCenterPCSC{
 			String inputFile = "pc3_2";//"pc5_3"; //"pc20_5";
 			PCenterPCSCZCompletelyOrdered formulation = new PCenterPCSCZCompletelyOrdered("./data/" + inputFile + ".dat");
 			//
-			System.out.println(formulation.getDimension());
+			System.out.println(formulation.getIPDimension());
 			//			Porta.getFacets(formulation, "./.tmp/" + inputFile + "_ordered_facets.ieq");
 
 			formulation.convertPOIFile("./.tmp/tmp.poi", "./.tmp/" + inputFile + "_nOrdered_converted_integer_points.poi");

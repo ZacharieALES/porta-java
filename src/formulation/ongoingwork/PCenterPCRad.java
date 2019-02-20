@@ -254,7 +254,7 @@ public class PCenterPCRad extends AbstractFormulation {
 
 			String prefix = date + "_kstar_" + inputFile + "_";
 
-			formulation.extractFacets(folderPath + prefix + "facets.ieq");
+			formulation.writeFacetsInFile(folderPath + prefix + "facets.ieq");
 
 			formulation.convertPOIFile("./.tmp/tmp.poi", folderPath + prefix + inputFile + "_integer_points.poi");
 			formulation.convertIEQFile("./.tmp/tmp.ieq", folderPath + prefix + inputFile + "_formulation.ieq", false);

@@ -222,9 +222,9 @@ public class PCenterPCSC extends AbstractFormulation {
 			
 			PCenterPCSC formulation = new PCenterPCSC("./data/" + inputFile + ".dat");
 
-			formulation.extractFacets(folderPath + prefix + "facets.ieq");
+			formulation.writeFacetsInFile(folderPath + prefix + "facets.ieq");
 
-			System.out.println(formulation.getDimension());
+			System.out.println(formulation.getIPDimension());
 
 			formulation.convertPOIFile("./.tmp/tmp.poi", "./.tmp/" + inputFile + "_converted_integer_points.poi");
 			formulation.convertIEQFile("./.tmp/tmp.ieq", "./.tmp/" + inputFile + "_converted_formulation.ieq", false);

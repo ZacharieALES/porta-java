@@ -2,14 +2,14 @@ The software [porta](http://porta.zib.de/) is used to analyze polytopes and poly
 * write your formulation so that porta understands it;
 * understand the outputs returned by porta.
 
-The aim of the porta-java project is to alleviate these drawbacks.
+The aim of porta-java is to alleviate these drawbacks.
 
-For a given polytope P, this project currently enables to:
-* find the integer points in P;
-* find the dimension and the hyperplans which include P;
-* find the [facets](https://en.wikipedia.org/wiki/Face_(geometry)#Facet_or_(n-1)-face) of P.
-
-In the context of this project, a polytope corresponds to the convex hull of a set of integer points.
+For a given polytope P, let I(P) be its integer polytope (i.e., the convex hull of P integer points). This project currently enables to:
+* find P integer points;
+* find P extreme points;
+* find I(P) extreme points;
+* find I(P) dimension and the hyperplanes which include it;
+* find I(P) [facets](https://en.wikipedia.org/wiki/Face_(geometry)#Facet_or_(n-1)-face).
 
 # How to use porta-java?
 
@@ -18,11 +18,11 @@ In the context of this project, a polytope corresponds to the convex hull of a s
 * Porta commands must be in your path.
  
 ## How to define a polytope? 
-1. Provide a linear formulation: the polytope will correspond to the convex hull of its feasible integer solutions.
+1. Provide a linear formulation;
 
 &nbsp;&nbsp;Advantage: usually easier to write;
 
-2. Provide a set of integer points: the polytope will directly correspond to their convex hull.
+2. Provide a set of integer points: the polytope will directly correspond to their convex hull (i.e., P = I(P)).
 
 &nbsp;&nbsp;Advantage: usually quicker (it may be long for porta to find the integer points associated to a formulation).
   
@@ -109,19 +109,28 @@ To define a polytope by providing integer points, create a class which extends A
 		 */
 	}
 	```
-## How to analyze a polytope once it is defined?
+## How to analyze a polytope P once it is defined?
    
-### Get its integer points
+### Get P integer points
   
     System.out.println(polytope.getIntegerPoints());
-      
-### Get its dimension
+   
+### Get P extreme points
   
-    System.out.println(polytope.getDimension());
+    System.out.println(polytope.getExtremePoints());
       
-### Get its facets 
+   
+### Get I(P) extreme points
   
-    System.out.println(polytope.getFacets());
+    System.out.println(polytope.getIPExtremePoints());
+      
+### Get I(P) dimension
+  
+    System.out.println(polytope.getIPDimension());
+      
+### Get I(P) facets 
+  
+    System.out.println(polytope.getIPFacets());
       
 ## The knapsack example
   The classes *KnapsackFormulation* and *KnapsackIntegerPoints* from the package "example" are good entry points to see how to use the software.

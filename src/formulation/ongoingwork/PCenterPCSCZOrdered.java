@@ -105,9 +105,9 @@ public class PCenterPCSCZOrdered extends PCenterPCSC{
 			String inputFile = "pc5_3"; //"pc20_5"; //"pc3_2";//
 			PCenterPCSCZOrdered formulation = new PCenterPCSCZOrdered("./data/" + inputFile + ".dat");
 			//
-			System.out.println(formulation.getDimension());
+			System.out.println(formulation.getIPDimension());
 			
-			formulation.extractFacets("./.tmp/facet.ieq");
+			formulation.writeFacetsInFile("./.tmp/facet.ieq");
 			
 			//			Porta.getFacets(formulation, "./.tmp/" + inputFile + "_ordered_facets.ieq");
 
