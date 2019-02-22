@@ -22,7 +22,7 @@ For a given polytope P, let I(P) be its integer polytope (i.e., the convex hull 
 
 &nbsp;&nbsp;Advantage: usually easier to write;
 
-2. Provide a set of integer points: the polytope will directly correspond to their convex hull (i.e., P = I(P)).
+2. Provide a set of integer points (in that case P = I(P)).
 
 &nbsp;&nbsp;Advantage: usually quicker (it may be long for porta to find the integer points associated to a formulation).
   
